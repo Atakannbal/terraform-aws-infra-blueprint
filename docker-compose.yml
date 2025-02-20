@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: my-java-backend
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - DB_URL=jdbc:postgresql://my-postgres:5432/mydb
+      - DB_USER=user
+      - DB_PASSWORD=pass
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+
+  frontend:
+    build: ./frontend
+    container_name: my-react-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+
+volumes:
+  postgres_data:
