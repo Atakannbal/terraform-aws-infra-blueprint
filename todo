@@ -1,0 +1,13 @@
+[x] Frontend
+[x] Backend
+[x] Database
+[x] Store sensitive data in AWS Secrets Manager
+[x] Backend API in private subnet
+[x] DB is not publicly accessible and is placed in a private subnet
+[x] Access betweeen FE, BE, DB restricted via SGs
+[x] The entire infrastructure (EKS cluster, database, IAM roles, networking, etc.) must be provisioned using Terraform
+[x] Enable storage encryption (Encryption at Rest) on Postgresql, migrate the DB if necessary. 
+[x] Deploy a bastion host so you can access to the DB using it as a jumpserver with SSH. 
+[?] Enable AWS RDS Query Editor through terraform. (If it is possible without upgrading the database to an expensive instance class.) 
+[x] Set an automated backup for a time slot. 
+[x] Enable enhanced monitoring so you can monitor the current running sessions and queries on DB.
