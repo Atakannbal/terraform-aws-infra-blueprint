@@ -189,7 +189,7 @@ resource "aws_secretsmanager_secret_version" "db_credentials_version" {
 
 resource "aws_key_pair" "ce_task_key" {
   key_name   = "ce-task-key"
-  public_key = "ssh-rsa <pub_key>"
+  public_key = file("${path.module}/ce-task-key.pub")
 }
 
 resource "aws_instance" "bastion" {
