@@ -1,3 +1,9 @@
+variable "my_ip" {
+  description = "My public IP adress for SSH and database access"
+  type = string
+  default = "176.88.142.54/32"
+}
+
 provider "aws" {
   region = "eu-central-1"
 }
@@ -77,7 +83,7 @@ module "eks" {
   }
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
-  cluster_endpoint_public_access_cidrs = ["<ip>/32"]
+  cluster_endpoint_public_access_cidrs = [var.my_ip]
 }
 
 resource "aws_security_group" "backend_sg" {
@@ -189,7 +195,7 @@ resource "aws_secretsmanager_secret_version" "db_credentials_version" {
 
 resource "aws_key_pair" "ce_task_key" {
   key_name   = "ce-task-key"
-  public_key = "ssh-rsa <pub_key>"
+  public_key = file("${path.module}/ce-task-key.pub")
 }
 
 resource "aws_instance" "bastion" {
@@ -213,7 +219,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["<ip>/32"]
+    cidr_blocks = [var.my_ip]
   }
 
   egress {
@@ -232,45 +238,6 @@ resource "aws_security_group_rule" "bastion_to_rds" {
   source_security_group_id = aws_security_group.bastion_sg.id
   security_group_id        = aws_security_group.rds_sg.id
 }
-
-
-
-output "vpc_id" {
-  value = module.vpc.vpc_id
-}
-
-output "private_subnets" {
-  value = module.vpc.private_subnets
-}
-
-output "public_subnets" {
-  value = module.vpc.public_subnets
-}
-
-output "eks_cluster_security_group_id" {
-  value = module.eks.cluster_security_group_id
-}
-
-output "eks_cluster_endpoint" {
-  value = module.eks.cluster_endpoint
-}
-
-output "db_endpoint" {
-  value = module.rds.db_instance_endpoint
-}
-
-output "secrets_manager_secret_arn" {
-  value = aws_secretsmanager_secret.db_credentials.arn
-}
-
-output "backend_sg_id" {
-  value = aws_security_group.backend_sg.id
-}
-
-output "eks_node_security_group_id" {
-  value = module.eks.node_security_group_id
-}
-
 output "frontend_ecr_repository_url" {
   value = aws_ecr_repository.ce-task-frontend-ecr.repository_url
 }
