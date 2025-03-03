@@ -1,3 +1,9 @@
+variable "my_ip" {
+  description = "My public IP adress for SSH and database access"
+  type = string
+  default = "176.88.142.54/32"
+}
+
 provider "aws" {
   region = "eu-central-1"
 }
@@ -77,7 +83,7 @@ module "eks" {
   }
   cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
-  cluster_endpoint_public_access_cidrs = ["<ip>/32"]
+  cluster_endpoint_public_access_cidrs = [var.my_ip]
 }
 
 resource "aws_security_group" "backend_sg" {
@@ -213,7 +219,7 @@ resource "aws_security_group" "bastion_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["<ip>/32"]
+    cidr_blocks = [var.my_ip]
   }
 
   egress {
