@@ -64,18 +64,3 @@ Amazon EKS, Amazon RDS, AWS Secrets Manager, Amazon VPC, Elastic Load Balancing 
 
 ### Getting the external IP for LB
 `kubectl get svc frontend-service -o wide`
-
-
-### Checking if resources exist on AWS
-`aws ec2 describe-vpcs --filters Name=tag:Name,Values=ce-task-vpc --region eu-central-1`
-
-`aws eks describe-cluster --name ce-task-eks-cluster --region eu-central-1`
-
-`aws rds describe-db-instances --db-instance-identifier ce-task-calculator-db --region eu-central-1`
-
-`aws ec2 describe-instances --filters Name=tag:Name,Values=ce-task-bastion --region eu-central-1`
-
-
-### Ensure the AWS Load Balancer Conroller is installed for frontend-service
-`kubectl get deployment -n kube-system aws-load-balancer-controller`
-
