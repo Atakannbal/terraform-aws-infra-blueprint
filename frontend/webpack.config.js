@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
@@ -30,6 +31,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',  
       filename: 'index.html'            
-    })
+    }),
+    new webpack.DefinePlugin({
+      'process.env': {
+        REACT_APP_POD_NAME: JSON.stringify('POD_NAME_PLACEHOLDER'),
+        REACT_APP_POD_IP: JSON.stringify('POD_IP_PLACEHOLDER'),
+      },
+    }),
   ]
 };
