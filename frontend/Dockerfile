@@ -14,4 +14,4 @@ RUN chmod +x /app/replace-placeholders.sh
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "/app/replace-placeholders.sh && nginx -g 'daemon off;'"]
