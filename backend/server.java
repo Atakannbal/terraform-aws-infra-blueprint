@@ -12,10 +12,20 @@ public class server {
     private static final String DB_URL = System.getenv("DB_URL");
     private static final String DB_USER = System.getenv("DB_USER");
     private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
+    private static Connection dbConnection;
 
 
     public static void main(String[] args) throws IOException {
-        createTableIfNotExists();
+
+        // Initializa single connection
+        try {
+            dbConnection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            dbConnection.setAutoCommit(true); // Ensure commits happen per request
+            createTableIfNotExists();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
 
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/sum", exchange -> {
@@ -71,22 +81,13 @@ public class server {
 
     private static int storeResult(int num1, int num2, int result) throws SQLException  {
         String sql = "INSERT INTO sums (num1, num2, result) VALUES (?, ?, ?)";
-        try (
-            Connection conn = DriverManager.getConnection(
-                DB_URL,
-                DB_USER,
-                DB_PASSWORD
-            );
-            PreparedStatement stmt = conn.prepareStatement(sql)
-        ) {
+        try (PreparedStatement stmt = dbConnection.prepareStatement(sql)) {
             stmt.setInt(1, num1);
             stmt.setInt(2, num2);
             stmt.setInt(3, result);
             stmt.executeUpdate();
             System.out.println("Stored result: " + result);
             return result;
-        } catch (SQLException e) {
-            throw e;
         }
     }
 }
