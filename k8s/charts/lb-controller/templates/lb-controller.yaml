@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: aws-load-balancer-controller
+  namespace: kube-system
+  annotations:
+    eks.amazonaws.com/role-arn: {{ .Values.roleArn }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aws-load-balancer-controller
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/name: aws-load-balancer-controller
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: aws-load-balancer-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: aws-load-balancer-controller
+    spec:
+      serviceAccountName: aws-load-balancer-controller
+      securityContext:
+        runAsNonRoot: true
+      initContainers:
+      - name: install-certs
+        image: bitnami/kubectl:1.28
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          # Generate self-signed certificate
+          openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/tls.key -out /tmp/tls.crt -subj "/CN=aws-load-balancer-webhook"
+          # Create the target directory
+          mkdir -p /tmp/k8s-webhook-server/serving-certs
+          # Move certificates to the serving-certs directory
+          mv /tmp/tls.crt /tmp/k8s-webhook-server/serving-certs/
+          mv /tmp/tls.key /tmp/k8s-webhook-server/serving-certs/
+        volumeMounts:
+        - name: webhook-certs
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+      containers:
+      - name: controller 
+        image: public.ecr.aws/eks/aws-load-balancer-controller:v2.12.0
+        args:
+        - --cluster-name=ce-task-eks-cluster
+        - --ingress-class=alb
+        resources:
+          limits:
+            cpu: 100m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        volumeMounts:
+        - name: webhook-certs
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+          readOnly: true
+      volumes:
+      - name: webhook-certs
+        emptyDir: {}
