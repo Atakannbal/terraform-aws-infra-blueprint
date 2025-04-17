@@ -2,8 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
+  namespace: default
 spec:
-  replicas: 1
+  replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
       app: backend
@@ -14,11 +15,23 @@ spec:
     spec:
       containers:
       - name: backend
-        image: <image url>
+        image: {{ .Values.backend.image }}
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+
+                # Add resources section here
+        resources:
+          requests:
+            cpu: 250m    # Very low CPU request
+            memory: 100Mi  # Very low memory request
+          limits:
+            cpu: 300m   # Slightly higher limit
+            memory: 128Mi  # Slightly higher limit
+
+
         env:
+        
         - name: DB_URL
           valueFrom:
             secretKeyRef:
@@ -34,15 +47,3 @@ spec:
             secretKeyRef:
               name: db-credentials
               key: DB_PASSWORD
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-spec:
-  selector:
-    app: backend
-  ports:
-  - port: 8080
-    targetPort: 8080
-  type: ClusterIP
