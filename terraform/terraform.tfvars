@@ -1,0 +1,5 @@
+my_ip               = "176.88.138.155/32"
+iam_user_arn        = "arn:aws:iam::980921750296:user/Atakan"
+iam_user_name       = "Atakan"
+domain_name         = "ce-project-aws.atakanbal.com"
+region              = "eu-central-1"
