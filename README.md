@@ -1,4 +1,10 @@
-# Simple App deployment on AWS using EKS
+# Example Infra and App deployment on AWS 
+
+## Pre-requisites
+1. Terraform
+2. Python 3.8+
+3. AWS CLI installed and configured
+
 
 ## Overview
 Deployment of an application AWS EKS with a frontend, backend, and PostgreSQL database, focusing is on infrastructure over app complexity.
@@ -9,7 +15,6 @@ Deployment of an application AWS EKS with a frontend, backend, and PostgreSQL da
 - Database: PostgreSQL RDS
 
 ## Architecture
-
 
 1. Networking (VPC)
     - ![alt text](image.png) three-tier web application
@@ -60,7 +65,16 @@ Amazon EKS, Amazon RDS, AWS Secrets Manager, Amazon VPC, Elastic Load Balancing 
 ## Useful Snippets
 
 ### Connecting local `kubectl`to EKS
-`aws eks update-kubeconfig --region <region> --name <cluster_name>`
+`aws eks update-kubeconfig --name ce-task-eks-cluster --region eu-central-1`
 
 ### Getting the external IP for LB
 `kubectl get svc frontend-service -o wide`
+
+### Getting HPA status
+`kubectl get hpa backend-hpa -n default`
+
+### Getting pod cpu and memory usage
+`kubectl top pods -n default`
+
+### Display security groups
+`aws ec2 describe-security-groups --region eu-central-1 --filters Name=vpc-id,Values=vpc-03a4aba8ae6720d40`
