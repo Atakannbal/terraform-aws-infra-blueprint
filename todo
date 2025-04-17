@@ -1,13 +1,31 @@
-[x] Frontend
-[x] Backend
-[x] Database
-[x] Store sensitive data in AWS Secrets Manager
-[x] Backend API in private subnet
-[x] DB is not publicly accessible and is placed in a private subnet
-[x] Access betweeen FE, BE, DB restricted via SGs
-[x] The entire infrastructure (EKS cluster, database, IAM roles, networking, etc.) must be provisioned using Terraform
-[x] Enable storage encryption (Encryption at Rest) on Postgresql, migrate the DB if necessary. 
-[x] Deploy a bastion host so you can access to the DB using it as a jumpserver with SSH. 
-[?] Enable AWS RDS Query Editor through terraform. (If it is possible without upgrading the database to an expensive instance class.) 
-[x] Set an automated backup for a time slot. 
-[x] Enable enhanced monitoring so you can monitor the current running sessions and queries on DB.
+
+# Done
+[x] Implement frontend application  
+[x] Implement backend application   
+[x] Set up RDS Postgresql database  
+[x] Store sensitive data in AWS Secrets Manager  
+[x] Put Backend service in private subnet  
+[x] Put DB in private subnet block public access  
+[x] Configure Security Groups for the communication between Frontend, Backend, and Database  
+[x] Provision the entire infrastructure (EKS cluster, database, IAM roles, networking, etc.) via Terraform    
+[x] Enable storage encryption (Encryption at Rest) on Postgresql, migrate the DB if necessary.   
+[x] Deploy a bastion host so you can access to the DB using it as a jumpserver with SSH.   
+[x] Set an automated backup for a time slot.   
+[x] Enable enhanced monitoring so you can monitor the current running sessions and queries on DB.  
+[x] Fix IAM permission to EKS  
+[x] Randomize secret manager Postfix  
+[x] Configure a Github Actions workflow that builds the image and pushes images to ECR.  
+[x] Route the traffic from the domain name through the load balancer to the pods using an Application Load Balancer  
+[x] Configure HPA for the backend and frontend services to automatically scale the number of pods based on CPU/Memory usages  
+[x] Configure Amazon CloudWatch to collect logs and metrics from EKS
+[x] Modularize
+[x] Modularize Terraform Code and Enable Environment-Based Configuration
+[] Keep terraform state on S3
+[] AMI with PostgreSQL installed
+[] CloudFront for static content
+[] WAF
+[] Cluster Autoscaler
+[] Kubernetes External Secrets Operator
+[] Architecture diagram
+
+
