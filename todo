@@ -20,4 +20,5 @@
 [x] Configure Amazon CloudWatch to collect logs and metrics from EKS
 [x] Modularize
 [x] Modularize Terraform Code and Enable Environment-Based Configuration
+[] Keep terraform state on S3
 
