@@ -2,11 +2,11 @@
 module "vpc" {
   source             = "terraform-aws-modules/vpc/aws"
   version            = "~> 5.0"
-  name               = "${var.project_name}-vpc"
+  name               = "${var.project_name}-${var.environment}-vpc"
   cidr               = "10.0.0.0/16"
-  azs                = ["${var.region}a", "${var.region}b"]
-  public_subnets     = ["10.0.1.0/24", "10.0.2.0/24"]
-  private_subnets    = ["10.0.101.0/24", "10.0.102.0/24"]
+  azs                = var.availability_zones
+  public_subnets     = var.public_subnets
+  private_subnets    = var.private_subnets
 
   # Enable a NAT Gateway for private subnets to access the internet
   enable_nat_gateway = true

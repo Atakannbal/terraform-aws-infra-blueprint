@@ -12,10 +12,17 @@ terraform {
   }
 }
 
+# Data source to get EKS cluster authentication token
+data "aws_eks_cluster_auth" "this" {
+  name = length(module.eks) > 0 ? module.eks[0].cluster_name : "destroy"
+}
+
+data "aws_caller_identity" "current" {}
+
 # Kubernetes provider configuration to interact with the EKS cluster
 provider "kubernetes" {
-  host                   = module.eks.cluster_endpoint
-  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  host                   = length(module.eks) > 0 ? module.eks[0].cluster_endpoint : null
+  cluster_ca_certificate = length(module.eks) > 0 ? base64decode(module.eks[0].cluster_certificate_authority_data) : null
   token                  = data.aws_eks_cluster_auth.this.token
 }
 
@@ -27,8 +34,8 @@ provider "aws" {
 # Helm provider configuration for deploying Helm charts
 provider "helm" {
   kubernetes {
-    host                   = module.eks.cluster_endpoint
-    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+    host                   = length(module.eks) > 0 ? module.eks[0].cluster_endpoint : null
+    cluster_ca_certificate = length(module.eks) > 0 ? base64decode(module.eks[0].cluster_certificate_authority_data) : null
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"

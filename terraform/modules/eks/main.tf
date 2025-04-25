@@ -42,7 +42,7 @@ module "eks" {
   version         = "20.14.0"
 
   cluster_name    = var.cluster_name
-  cluster_version = "1.31"
+  cluster_version = var.eks_cluster_version
 
   vpc_id          = var.vpc_id
 
@@ -56,7 +56,7 @@ module "eks" {
       max_size       = 3
       desired_size   = 2
       # Use t3.micro instances for cost efficiency
-      instance_types = ["t3.small"]
+      instance_types = var.eks_instance_type
       # Use a custom IAM role for the node group
       iam_role_arn   = aws_iam_role.eks_node_group_role.arn
       create_iam_role = false
@@ -64,7 +64,7 @@ module "eks" {
   }
   # Allow public access to the cluster endpoint (restricted by CIDR)
   cluster_endpoint_public_access       = true
-  cluster_endpoint_public_access_cidrs = [var.my_ip]
+  cluster_endpoint_public_access_cidrs = var.cidr_external_access
   # Allow private access to the cluster endpoint
   cluster_endpoint_private_access      = true
   # Enable IRSA for service accounts (e.g., AWS Load Balancer Controller, External DNS)

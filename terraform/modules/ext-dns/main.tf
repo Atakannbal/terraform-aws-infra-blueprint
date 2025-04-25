@@ -9,7 +9,7 @@ resource "aws_route53_zone" "primary" {
 
 # IAM role for External DNS to manage Route 53 records
 resource "aws_iam_role" "external_dns" {
-  name = "ce-task-external-dns-role"
+  name = "${var.project_name}-${var.environment}-external-dns-role"
 
 # Allow the External DNS service account to assume this role via IRSA
   assume_role_policy = jsonencode({
@@ -34,8 +34,9 @@ resource "aws_iam_role" "external_dns" {
 
 # IAM policy for External DNS to manage Route 53 records
 resource "aws_iam_role_policy" "external_dns_policy" {
-  name   = "ce-task-external-dns-policy"
+  name   = "${var.project_name}-${var.environment}-external-dns-policy"
   role   = aws_iam_role.external_dns.id
+  
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -66,7 +67,7 @@ resource "aws_iam_role_policy" "external_dns_policy" {
 # Helm release for External DNS to manage Route 53 records
 resource "helm_release" "external_dns" {
   name       = "external-dns"
-  chart      = "../k8s/charts/external-dns"
+  chart      = "${path.module}/helm"
   namespace  = "kube-system"
 
   # IAM role ARN for External DNS
@@ -91,6 +92,11 @@ resource "helm_release" "external_dns" {
   set {
     name  = "region"
     value = var.region
+  }
+
+  set {
+    name = "version"
+    value = var.eks_external_dns_version
   }
 }
 

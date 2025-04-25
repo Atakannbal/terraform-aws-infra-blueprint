@@ -20,7 +20,7 @@ resource "random_password" "rds_password" {
 
 # Create a Secrets Manager secret to store the RDS credentials
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "${var.project_name}-credentials-${random_string.suffix.result}"
+  name = "${var.project_name}-${var.environment}-credentials-${random_string.suffix.result}"
 }
 
 # Create a KMS key for RDS encryption
@@ -31,19 +31,19 @@ resource "aws_kms_key" "rds_key" {
 
 # Create an alias for the KMS key
 resource "aws_kms_alias" "rds_key_alias" {
-  name          = "alias/${var.project_name}-rds-key"
+  name          = "alias/${var.project_name}-${var.environment}-rds-key"
   target_key_id = aws_kms_key.rds_key.key_id
 }
 
 # Create a DB subnet group for the RDS instance
 resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${var.project_name}-db-subnet-group"
+  name       = "${var.project_name}-${var.environment}-db-subnet-group"
   subnet_ids = var.subnet_ids
 }
 
 # Create a security group for the RDS instance
 resource "aws_security_group" "rds_sg" {
-  name   = "${var.project_name}-rds-sg"
+  name   = "${var.project_name}-${var.environment}-rds-sg"
   vpc_id = var.vpc_id
   ingress {
     from_port       = 5432
@@ -61,7 +61,7 @@ resource "aws_security_group" "rds_sg" {
 
 # Security group for the backend application
 resource "aws_security_group" "backend_sg" {
-  name   = "ce-task-backend-sg"
+  name   = "${var.project_name}-${var.environment}-backend-sg"
   vpc_id = var.vpc_id
   # Allow inbound traffic on port 8080 from public subnets (e.g., from ALB)
   ingress {
@@ -81,7 +81,7 @@ resource "aws_security_group" "backend_sg" {
 
 # Create an IAM role for RDS enhanced monitoring
 resource "aws_iam_role" "rds_enhanced_monitoring" {
-  name = "${var.project_name}-rds-enhanced-monitoring-role"
+  name = "${var.project_name}-${var.environment}-rds-enhanced-monitoring-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -102,16 +102,16 @@ resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
 module "rds" {
   source                 = "terraform-aws-modules/rds/aws"
   version                = "~> 6.0"
-  identifier             = "${var.project_name}-calculator-db"
-  engine                 = "postgres"
-  engine_version         = "15"
+  identifier             = "${var.project_name}-${var.environment}-calculator-db"
+  engine                 = var.rds_engine
+  engine_version         = var.rds_engine_version
   family                 = "postgres15"
-  instance_class         = "db.t3.micro"
-  allocated_storage      = 20
-  db_name                = "calculator"
-  username               = "atakbal"
+  instance_class         = var.rds_db_instance_class
+  allocated_storage      = var.rds_instance_allocated_storage
+  db_name                = var.rds_db_default_name
+  username               = var.rds_master_credentials_user
   password               = random_password.rds_password.result
-  port                   = 5432
+  port                   = var.rds_port
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   subnet_ids             = var.subnet_ids
   db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name

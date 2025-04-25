@@ -9,7 +9,7 @@ module "aws_lb_controller_role" {
   source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version     = "~> 5.0"
   create_role = true
-  role_name   = "${var.project_name}-aws-lb-controller-role"
+  role_name   = "${var.project_name}-${var.environment}-aws-lb-controller-role"
   provider_url = var.oidc_provider
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
   role_policy_arns = [aws_iam_policy.aws_lb_controller_policy.arn]
@@ -20,9 +20,8 @@ resource "kubernetes_service_account" "aws_load_balancer_controller" {
   metadata {
     name      = "aws-load-balancer-controller"
     namespace = "kube-system"
-    # Associate the service account with the IAM role via IRSA
     annotations = {
-      "eks.amazonaws.com/role-arn" = "arn:aws:iam::${var.account_id}:role/${var.project_name}-aws-lb-controller-role"
+      "eks.amazonaws.com/role-arn" = module.aws_lb_controller_role.iam_role_arn
     }
   }
 }
@@ -33,7 +32,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   namespace  = "kube-system"
-  version    = "1.10.0" # Update to a version compatible with v2.12.0
+  version    = var.eks_aws_lb_controller_version
   depends_on = [kubernetes_service_account.aws_load_balancer_controller]
 
   set {
@@ -51,7 +50,6 @@ resource "helm_release" "aws_load_balancer_controller" {
     value = "aws-load-balancer-controller"
   }
 
-  # Associate the service account with the IAM role via IRSA
   set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = "arn:aws:iam::${var.account_id}:role/${var.project_name}-aws-lb-controller-role"
