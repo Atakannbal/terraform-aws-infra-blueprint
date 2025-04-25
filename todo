@@ -18,5 +18,6 @@
 [x] Route the traffic from the domain name through the load balancer to the pods using an Application Load Balancer  
 [x] Configure HPA for the backend and frontend services to automatically scale the number of pods based on CPU/Memory usages  
 [x] Configure Amazon CloudWatch to collect logs and metrics from EKS
-[] Modularize
+[x] Modularize
+[x] Modularize Terraform Code and Enable Environment-Based Configuration
 
