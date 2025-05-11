@@ -78,6 +78,9 @@ Browser -> `frontend-external-ip` -> ELB Routes the inbound traffic from the int
 ### Displaying security groups
 `aws ec2 describe-security-groups --region eu-central-1 --filters Name=vpc-id,Values=vpc-07b0d74b5ac63daa0`
 
+### Deleting security group
+`aws ec2 delete-security-group --group-id sg-12345678`
+
 ### Checking Terraform logs
 `export TF_LOG=DEBUG`
 `terraform destroy 2>&1 | tee destroy.log`
