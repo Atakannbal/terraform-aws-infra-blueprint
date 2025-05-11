@@ -21,4 +21,11 @@
 [x] Modularize
 [x] Modularize Terraform Code and Enable Environment-Based Configuration
 [] Keep terraform state on S3
+[] AMI with PostgreSQL installed
+[] CloudFront for static content
+[] WAF
+[] Cluster Autoscaler
+[] Kubernetes External Secrets Operator
+[] Architecture diagram
+
 
