@@ -1,20 +1,3 @@
-# Data source to retrieve the latest Amazon Linux 2 AMI
-# Used to launch the bastion host with a reliable, up-to-date image
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-  owners      = ["amazon"] 
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
-  }
-
-  filter {
-    name   = "state"
-    values = ["available"]
-  }
-}
-
 # SSH key pair for the bastion host
 resource "aws_key_pair" "ce_task_key" {
   key_name   = "${var.project_name}-${var.environment}-bastion-key"
@@ -49,7 +32,7 @@ resource "aws_security_group" "bastion_sg" {
 # EC2 instance for the bastion host
 # Provides a secure entry point to access resources in private subnets (e.g., RDS)
 resource "aws_instance" "bastion" {
-  ami                         = data.aws_ami.amazon_linux_2.id
+  ami                         = "ami-045e7795f0bdf93b6"
   instance_type               = "t3.micro"
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.bastion_sg.id]
