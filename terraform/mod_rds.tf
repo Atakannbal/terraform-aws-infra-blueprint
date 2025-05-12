@@ -7,8 +7,8 @@ module "rds" {
   vpc_id         = module.vpc[0].vpc_id
   subnet_ids     = module.vpc[0].private_subnets
   public_subnets_cidr_blocks = module.vpc[0].public_subnets_cidr_blocks
-  eks_sg_id      = module.eks[0].node_security_group_id  
-  bastion_sg_id  = module.bastion[0].bastion_sg_id
+  eks_sg_id      = local.eks_exists ? module.eks[0].node_security_group_id : null 
+  bastion_sg_id  = local.bastion_exists ? module.bastion[0].bastion_sg_id : null
   rds_engine_version           = var.rds_engine_version
   rds_instance_allocated_storage = var.rds_instance_allocated_storage
   rds_port                     = var.rds_port

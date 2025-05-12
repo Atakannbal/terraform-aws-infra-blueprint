@@ -19,8 +19,6 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
-
-                # Add resources section here
         resources:
           requests:
             cpu: 250m    # Very low CPU request
@@ -28,10 +26,7 @@ spec:
           limits:
             cpu: 300m   # Slightly higher limit
             memory: 128Mi  # Slightly higher limit
-
-
         env:
-        
         - name: DB_URL
           valueFrom:
             secretKeyRef:

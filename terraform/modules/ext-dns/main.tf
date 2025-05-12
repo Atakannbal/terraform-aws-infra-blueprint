@@ -100,6 +100,7 @@ resource "helm_release" "external_dns" {
   }
 }
 
+
 resource "null_resource" "cleanup_route53" {
   triggers = {
     destroy_trigger = "${var.vpc_id}" # Trigger only when the VPC is being destroyed

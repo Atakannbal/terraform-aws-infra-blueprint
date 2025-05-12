@@ -5,7 +5,7 @@ metadata:
   namespace: default
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/target-type: ip  # Change to ip (recommended for EKS)
+    alb.ingress.kubernetes.io/target-type: ip 
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.frontend.certArn }}
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
@@ -15,7 +15,7 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
 spec:
-  ingressClassName: alb  # Add this
+  ingressClassName: alb
   rules:
   - host: {{ .Values.frontend.hostname }}
     http:
