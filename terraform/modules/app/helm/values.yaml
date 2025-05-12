@@ -1,7 +1,6 @@
+region: "" 
+projectName: ""
 frontend:
   replicas: 1
 backend:
   replicas: 1
-#fluentbitRoleArn: ""
-region: "" 
-projectName: ""

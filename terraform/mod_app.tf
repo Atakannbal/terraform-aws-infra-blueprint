@@ -1,13 +1,14 @@
 module "app" {
   count = var.enable_app_module ? 1 : 0
   source = "./modules/app"
-  projectName         = var.project_name
+  project_name        = var.project_name
 
-  secrets_dbUser      = local.db_secrets.username
-  secrets_dbPassword  = local.db_secrets.password
-  secrets_dbUrl       = local.db_url_with_prefix
-  frontend_image      = local.frontend_image
-  backend_image       = local.backend_image
+  db_user             = local.db_vars.username
+  db_password         = local.db_vars.password
+  db_url              = local.db_vars.db_url_with_prefix
+  
+  frontend_image_url  = local.frontend_image
+  backend_image_url   = local.backend_image
   frontend_hostname   = var.public_domain
   region              = var.region
 

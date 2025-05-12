@@ -15,27 +15,27 @@ resource "helm_release" "app" {
   # Database credentials for the backend
   set {
     name  = "secrets.dbUser"
-    value = var.secrets_dbUser
+    value = var.db_user
   }
   set {
     name  = "secrets.dbPassword"
-    value = var.secrets_dbPassword
+    value = var.db_password
   }
   set {
     name  = "secrets.dbUrl"
-    value = var.secrets_dbUrl
+    value = var.db_url
   }
 
   # Frontend image URL
   set {
     name  = "frontend.image"
-    value = var.frontend_image
+    value = var.frontend_image_url
   }
 
   # Backend image URL
   set {
     name  = "backend.image"
-    value = var.backend_image
+    value = var.backend_image_url
   }
 
   # Hostname for the frontend Ingress

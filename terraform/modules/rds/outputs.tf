@@ -2,12 +2,16 @@ output "db_instance_endpoint" {
   value = module.rds.db_instance_endpoint
 }
 
-output "db_credentials_secret_name" {
-  value = aws_secretsmanager_secret.db_credentials.name
+output "db_instance_master_user_secret_arn" {
+  value = module.rds.db_instance_master_user_secret_arn
 }
 
-output "db_credentials_secret_version" {
-  value = aws_secretsmanager_secret_version.db_credentials_version.secret_string
+output "db_instance_username" {
+  value = module.rds.db_instance_username
+}
+
+output "db_instance_name" {
+  value = module.rds.db_instance_name
 }
 
 output "db_instance_identifier" {

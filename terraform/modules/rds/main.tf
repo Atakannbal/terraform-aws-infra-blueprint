@@ -5,24 +5,6 @@ resource "random_string" "suffix" {
   upper = false
 }
 
-# Generate a random password for the RDS instance
-resource "random_password" "rds_password" {
-  length           = 50
-  special          = false
-
-  lifecycle {
-    ignore_changes = [
-      special,
-      length
-    ]
-  }
-}
-
-# Create a Secrets Manager secret to store the RDS credentials
-resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "${var.project_name}-${var.environment}-credentials-${random_string.suffix.result}"
-}
-
 # Create a KMS key for RDS encryption
 resource "aws_kms_key" "rds_key" {
   description         = "KMS key for RDS encryption"
@@ -49,7 +31,11 @@ resource "aws_security_group" "rds_sg" {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = [aws_security_group.backend_sg.id, var.eks_sg_id, var.bastion_sg_id]
+    security_groups = concat(
+      [aws_security_group.backend_sg.id],
+      var.bastion_sg_id != null ? [var.bastion_sg_id] : [],
+      var.eks_sg_id != null ? [var.eks_sg_id] : []
+    )
   }
   egress {
     from_port   = 0
@@ -110,7 +96,7 @@ module "rds" {
   allocated_storage      = var.rds_instance_allocated_storage
   db_name                = var.rds_db_default_name
   username               = var.rds_master_credentials_user
-  password               = random_password.rds_password.result
+  manage_master_user_password = true
   port                   = var.rds_port
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   subnet_ids             = var.subnet_ids
@@ -118,27 +104,9 @@ module "rds" {
   publicly_accessible    = false
   skip_final_snapshot    = true
   storage_encrypted      = true
-  manage_master_user_password = false
   kms_key_id             = aws_kms_key.rds_key.arn
   backup_retention_period = 1
   monitoring_interval     = 60
   monitoring_role_arn     = aws_iam_role.rds_enhanced_monitoring.arn
-}
-
-
-# Create a new version of the Secrets Manager secret with the RDS credentials
-resource "aws_secretsmanager_secret_version" "db_credentials_version" {
-  secret_id = aws_secretsmanager_secret.db_credentials.id
-  secret_string = jsonencode({
-    username = module.rds.db_instance_username
-    password = random_password.rds_password.result
-    host     = module.rds.db_instance_endpoint
-    dbname   = module.rds.db_instance_name
-  })
-
-  lifecycle {
-    ignore_changes = [
-      secret_string
-    ]
-  }
+  master_user_password_rotation_duration = "30d"
 }
