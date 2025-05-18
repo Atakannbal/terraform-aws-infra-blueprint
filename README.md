@@ -1,7 +1,7 @@
 # 🚀 AWS EKS Infrastructure & App Deployment with Terraform
 
 ## 📝 Overview
-Deployment of an application on AWS EKS with a frontend, backend, and PostgreSQL database.
+Deployment of an application on AWS with a frontend, backend, and PostgreSQL database.
 Focus is on infrastructure over app complexity.
 
 ## ⚙️ Pre-requisites
@@ -15,7 +15,7 @@ Focus is on infrastructure over app complexity.
 - 🗄️ Database: PostgreSQL
 
 ## 🛠️ Services used
-Amazon EKS ☸️, Amazon RDS 🗄️, AWS Secrets Manager 🔐, Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, Amazon EC2 🖥️, AWS KMS 🗝️, AWS CloudWatch 📊
+Amazon EKS ☸️, Amazon RDS 🗄️, AWS Secrets Manager 🔐, Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, Amazon EC2 🖥️, AWS CodeBuild 🛠️, AWS KMS 🗝️, AWS CloudWatch 📊
 
 ## 🏗️ Architecture
 
@@ -84,3 +84,6 @@ Browser -> `frontend-external-ip` -> ELB Routes the inbound traffic from the int
 ### Checking Terraform logs
 `export TF_LOG=DEBUG`
 `terraform destroy 2>&1 | tee destroy.log`
+
+### Check for NS records
+`dig ce-project-aws.atakanbal.com NS`
