@@ -1,3 +1,17 @@
+# Todo
+[] Practice RDS to Aurora migration
+[] Try to deploy using ECS instead of EKS
+[] Try to deploy using Fargate instead of EKS
+[] Check ArgoCD options
+[] Architecture diagram
+
+# In-progress
+[] Extract repository to its own repo  
+
+
+# Blocked / Canceled
+[-] WAF 
+* CloudFront out of the box provides DDoS protection, TLS/SSL Encryption, Geo-Restriction. WAF does not worth the 5$+ fix cost for my requirements.
 
 # Done
 [x] Implement frontend application  
@@ -9,23 +23,20 @@
 [x] Configure Security Groups for the communication between Frontend, Backend, and Database  
 [x] Provision the entire infrastructure (EKS cluster, database, IAM roles, networking, etc.) via Terraform    
 [x] Enable storage encryption (Encryption at Rest) on Postgresql, migrate the DB if necessary.   
-[x] Deploy a bastion host so you can access to the DB using it as a jumpserver with SSH.   
+[x] Deploy a bastion host as a jumpserver with SSH.   
 [x] Set an automated backup for a time slot.   
-[x] Enable enhanced monitoring so you can monitor the current running sessions and queries on DB.  
+[x] Enable enhanced monitoring so you can monitor the current running sessions and queries on DB  
 [x] Fix IAM permission to EKS  
-[x] Randomize secret manager Postfix  
-[x] Configure a Github Actions workflow that builds the image and pushes images to ECR.  
+[x] Randomize secret manager Postfix
+[x] Configure a Github Actions workflow that builds the image and pushes images to ECR 
 [x] Route the traffic from the domain name through the load balancer to the pods using an Application Load Balancer  
-[x] Configure HPA for the backend and frontend services to automatically scale the number of pods based on CPU/Memory usages  
+[x] Configure HPA for the backend and frontend services to automatically scale the number of pods based on CPU/Memory usage
 [x] Configure Amazon CloudWatch to collect logs and metrics from EKS
-[x] Modularize
-[x] Modularize Terraform Code and Enable Environment-Based Configuration
-[] Keep terraform state on S3
-[x] AMI with PostgreSQL installed
-[] CloudFront for static content
-[] WAF
-[] Cluster Autoscaler
-[] Kubernetes External Secrets Operator
-[] Architecture diagram
-
-
+[x] Modularize Terraform code and create environment-based configurations with tfvars
+[x] Create an AMI with PostgreSQL pre-installed
+[x] Implement CloudFront for serving static content
+[x] Put terraform state on S3
+[x] Improve the Github Actions workflow to also deploy app to EKS
+[x] Integrate Github Action with Codebuild Runners
+[x] Don't manage db-credentials secret via a static Helm template. use External Secrets Operator to fully manage secret by syncing it from AWS Secrets Manager.
+[x] Implement EKS Cluster Autoscaler to scale when there are not enough nodes
