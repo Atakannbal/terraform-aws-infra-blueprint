@@ -33,6 +33,12 @@ variable "cloudfront_domain_name" {
   type = string
 }
 
+variable "enable_codebuild_module" {
+  description = "Enable CodeBuild module"
+  type        = bool
+}
+
+
 
 variable "enable_vpc_module" {
   description = "Enable VPC module"
@@ -213,3 +219,37 @@ variable "sns_subscriber_email_address" {
   description = "Email address for SNS subscription"
   type        = string
 }
+variable "webhook_secret" {
+  description = "Webhook secret for CodeBuild"
+  type        = string
+  sensitive   = true
+}
+
+variable "github_pat" {
+  description = "GitHub Personal Access Token"
+  type        = string
+  sensitive   = true
+}
+
+variable "codebuild_github_repo" {
+  description = "GitHub repository URL"
+  type        = string
+}
+
+variable "codebuild_compute_type" {
+  description = "Compute type for CodeBuild"
+  type        = string
+}
+variable "codebuild_image" {
+  description = "Docker image for CodeBuild"
+  type        = string
+}
+variable "frontend_tag" {
+  description = "Tag for the frontend image"
+  type        = string
+}
+variable "backend_tag" {
+  description = "Tag for the backend image"
+  type        = string
+}
+
