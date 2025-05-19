@@ -1,9 +1,6 @@
 # Route 53 hosted zone for the domain
 resource "aws_route53_zone" "primary" {
-  name = var.domain_name
-  tags = {
-    Name = "ce-project-hosted-zone"
-  }
+  name = var.hosted_zone_domain_name
   force_destroy = true # Allow deletion of the hosted zone even if it has records
 }
 
@@ -79,7 +76,12 @@ resource "helm_release" "external_dns" {
   # Domain filter to manage records for your domain
   set {
     name  = "domainFilter"
-    value = var.domain_name
+    value = var.hosted_zone_domain_name
+  }
+
+  set {
+    name = "exludeDomains"
+    value = var.cloudfront_domain_name
   }
 
   # Identifier for TXT records created by External DNS

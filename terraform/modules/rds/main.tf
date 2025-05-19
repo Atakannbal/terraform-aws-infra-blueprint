@@ -13,14 +13,8 @@ resource "aws_kms_key" "rds_key" {
 
 # Create an alias for the KMS key
 resource "aws_kms_alias" "rds_key_alias" {
-  name          = "alias/${var.project_name}-${var.environment}-rds-key"
+  name          = "alias/${var.project_name}-${var.environment}-rds-encryption-key"
   target_key_id = aws_kms_key.rds_key.key_id
-}
-
-# Create a DB subnet group for the RDS instance
-resource "aws_db_subnet_group" "rds_subnet_group" {
-  name       = "${var.project_name}-${var.environment}-db-subnet-group"
-  subnet_ids = var.subnet_ids
 }
 
 # Create a security group for the RDS instance
@@ -100,7 +94,7 @@ module "rds" {
   port                   = var.rds_port
   vpc_security_group_ids = [aws_security_group.rds_sg.id]
   subnet_ids             = var.subnet_ids
-  db_subnet_group_name   = aws_db_subnet_group.rds_subnet_group.name
+  create_db_subnet_group = true
   publicly_accessible    = false
   skip_final_snapshot    = true
   storage_encrypted      = true

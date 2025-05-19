@@ -1,6 +1,6 @@
 data "aws_eks_cluster_auth" "this" {
   count = local.eks_exists ? 1 : 0
-  name = local.eks_exists ? module.eks[0].cluster_name : "destroy"
+  name = local.eks_exists ? module.eks[0].cluster_name : ""
 }
 
 data "aws_caller_identity" "current" {}
