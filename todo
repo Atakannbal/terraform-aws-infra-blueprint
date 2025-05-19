@@ -1,15 +1,13 @@
 # Todo
-[] Practice RDS to Aurora migration
-[] Try to deploy using ECS instead of EKS
-[] Try to deploy using Fargate instead of EKS
-[] Check ArgoCD options
+[] Experiment RDS to Aurora migration
+[] Experiment using ECS
+[] Experiment using Fargate
 [] Architecture diagram
 
 # In-progress
-[] Extract repository to its own repo  
 
 
-# Blocked / Canceled
+# Blocked
 [-] WAF 
 * CloudFront out of the box provides DDoS protection, TLS/SSL Encryption, Geo-Restriction. WAF does not worth the 5$+ fix cost for my requirements.
 
@@ -40,3 +38,4 @@
 [x] Integrate Github Action with Codebuild Runners
 [x] Don't manage db-credentials secret via a static Helm template. use External Secrets Operator to fully manage secret by syncing it from AWS Secrets Manager.
 [x] Implement EKS Cluster Autoscaler to scale when there are not enough nodes
+[x] Extract repository to its own repo  
