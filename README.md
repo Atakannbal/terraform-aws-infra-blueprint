@@ -69,6 +69,9 @@ Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS 
 
 ## 🔍 Useful Snippets
 
+### Apply using tfvars
+`terraform apply -var-file="apply-tfvars/prod.tfvars"`
+
 ### Connecting local kubectl to EKS
 `aws eks update-kubeconfig --name ce-task-prod-eks-cluster --region eu-central-1`
 
