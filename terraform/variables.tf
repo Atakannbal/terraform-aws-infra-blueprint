@@ -48,7 +48,7 @@ variable "enable_ecr_module" {
   type        = bool
 }
 
-variable "enable_ec2_bastion_module" {
+variable "enable_bastion_module" {
   description = "Enable EC2 Bastion module"
   type        = bool
 }
@@ -63,22 +63,22 @@ variable "enable_eks_module" {
   type        = bool
 }
 
-variable "enable_eks_aws_lb_controller" {
+variable "enable_alb_module" {
   description = "Enable AWS Load Balancer Controller for EKS"
   type        = bool
 }
 
-variable "enable_eks_external_dns" {
+variable "enable_external_dns_module" {
   description = "Enable External DNS for EKS"
   type        = bool
 }
 
-variable "enable_eks_cloudwatch_logs" {
+variable "enable_cloudwatch_module" {
   description = "Enable CloudWatch Logs for EKS"
   type        = bool
 }
 
-variable "enable_eks_metrics_server" {
+variable "enable_metrics_server_module" {
   description = "Enable Metrics Server for EKS"
   type        = bool
 }
@@ -133,7 +133,7 @@ variable "eks_max_nodes_count" {
   type        = number
 }
 
-variable "eks_aws_lb_controller_version" {
+variable "alb_controller_version" {
   description = "Version of AWS Load Balancer Controller for EKS"
   type        = string
 }
@@ -148,12 +148,12 @@ variable "eks_metrics_server_version" {
   type        = string
 }
 
-variable "eks_addon_podIdentity_version" {
+variable "eks_addon_pod_identity_version" {
   description = "Version of Pod Identity add-on for EKS"
   type        = string
 }
 
-variable "eks_addon_cloudwatchContainerInsights_version" {
+variable "eks_addon_cloudwatch_containerinsights_version" {
   description = "Version of CloudWatch Container Insights add-on for EKS"
   type        = string
 }

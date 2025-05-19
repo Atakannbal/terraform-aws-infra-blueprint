@@ -12,3 +12,8 @@ output "external_dns" {
     description = "Helm release for the AWS Load Balancer Controller"
     value       = helm_release.external_dns
 }
+
+output "route53_zone_id" {
+  description = "Route53 hosted zone id"
+  value = aws_route53_zone.primary.zone_id
+}

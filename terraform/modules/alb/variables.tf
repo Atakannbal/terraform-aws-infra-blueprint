@@ -1,39 +1,36 @@
 variable "project_name" {
-  description = "The name of the project."
-  type        = string
-}
-
-variable "vpc_id" {
-  description = "VPC ID where the resources will be deployed."
-  type        = string
-}
-
-variable "oidc_provider" {
-  description = "OIDC provider URL for IAM roles."
-  type        = string
-}
-
-variable "account_id" {
-  description = "AWS Account ID."
-  type        = string
-}
-
-variable "region" {
-  description = "AWS region to deploy resources."
-  type        = string
-}
-
-variable "cluster_name" {
-  description = "The name of the EKS cluster."
+  description = "Project name for tagging and resource naming."
   type        = string
 }
 
 variable "environment" {
-  description = "Deployment environment (e.g., dev, staging, prod)."
+  description = "Deployment environment (e.g., dev, prod)."
   type        = string
 }
 
-variable "eks_aws_lb_controller_version" {
+variable "region" {
+  description = "AWS region for resource deployment."
+  type        = string
+}
+
+# **************************************************
+
+variable "oidc_provider" {
+  description = "OIDC provider for the EKS cluster."
+  type        = string
+}
+
+variable "account_id" {
+  description = "AWS account ID."
+  type        = string
+}
+
+variable "cluster_name" {
+  description = "Name of the EKS cluster."
+  type        = string
+}
+
+variable "alb_controller_version" {
   description = "Version of the AWS Load Balancer Controller for EKS."
   type        = string
 }

@@ -1,8 +1,9 @@
 module "hpa" {
-  count = var.enable_hpa_module ? 1 : 0
+  count        = var.enable_hpa_module ? 1 : 0
   source       = "./modules/hpa"
   project_name = var.project_name
-  environment = var.environment
+  environment  = var.environment
+  region       = var.region
 
-  depends_on = [module.app]
+  depends_on   = [module.app, module.eks, module.cluster_autoscaler]
 }

@@ -1,7 +1,7 @@
 resource "aws_eks_addon" "pod_identity" {
   cluster_name  = var.cluster_name
   addon_name    = "eks-pod-identity-agent"
-  addon_version = var.eks_addon_podIdentity_version
+  addon_version = var.pod_identity_version
 }
 
 resource "aws_iam_role" "cloudwatch_observability" {
@@ -80,7 +80,7 @@ resource "aws_cloudwatch_log_group" "backend" {
 resource "aws_eks_addon" "cloudwatch_container_insights" {
   cluster_name = var.cluster_name
   addon_name   = "amazon-cloudwatch-observability"
-  addon_version = var.eks_addon_cloudwatchContainerInsights_version  # Minimum version supporting EKS Pod Identity (3.1.0 or later)
+  addon_version = var.cloudwatchContainerInsights_version  # Minimum version supporting EKS Pod Identity (3.1.0 or later)
 
   configuration_values = jsonencode({
       agent = {
