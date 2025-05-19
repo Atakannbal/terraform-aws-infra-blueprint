@@ -18,10 +18,21 @@ variable "availability_zones" {
   type        = list(string)
 }
 
-variable "public_domain" {
-  description = "Public domain name"
+variable "hosted_zone_domain_name" {
+  description = "Domain name for the hosted zone"
   type        = string
 }
+
+variable "load_balancer_domain_name" {
+  description = "Domain name for the load balancer"
+  type = string
+}
+
+variable "cloudfront_domain_name" {
+  description = "Domain name for CloudFront"
+  type = string
+}
+
 
 variable "enable_vpc_module" {
   description = "Enable VPC module"
@@ -80,6 +91,11 @@ variable "enable_cloudwatch_module" {
 
 variable "enable_metrics_server_module" {
   description = "Enable Metrics Server for EKS"
+  type        = bool
+}
+
+variable "enable_cloudfront_module" {
+  description = "Enable CloudFront for the application"
   type        = bool
 }
 
