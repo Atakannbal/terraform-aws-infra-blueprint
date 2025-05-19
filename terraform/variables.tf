@@ -139,6 +139,7 @@ variable "eks_cluster_version" {
   type        = string
 }
 
+
 variable "eks_instance_type" {
   description = "Instance types for EKS nodes"
   type        = list(string)
@@ -173,6 +174,8 @@ variable "eks_metrics_server_version" {
   description = "Version of Metrics Server for EKS"
   type        = string
 }
+
+
 variable "eks_cluster_autoscaler_version" {
   description = "Version of the EKS cluster"
   type        = string
@@ -227,6 +230,13 @@ variable "sns_subscriber_email_address" {
   description = "Email address for SNS subscription"
   type        = string
 }
+
+variable "custom_header_secret" {
+  description = "Secret value for custom header to secure ALB"
+  type        = string
+  sensitive   = true
+}
+
 variable "webhook_secret" {
   description = "Webhook secret for CodeBuild"
   type        = string
@@ -257,6 +267,12 @@ variable "enable_cluster_autoscaler_module" {
   description = "Enable Cluster Autoscaler"
   type        = bool
 }
+
+variable "external_secrets_helm_version" {
+  description = "Helm chart version for External Secrets Operator"
+  type        = string
+}
+
 variable "frontend_tag" {
   description = "Tag for the frontend image"
   type        = string

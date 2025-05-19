@@ -32,3 +32,15 @@ output "node_role_name" {
   description = "IAM role name for EKS worker nodes"
   value       = aws_iam_role.eks_node_group_role.name
 }
+
+output "eks_cluster_iam_role_arn" {
+  description = "IAM role ARN for EKS cluster"
+  value       = module.eks.cluster_iam_role_arn
+}
+
+output "cluster_security_group_id" {
+  description = "Security group ID for the EKS cluster"
+  value       = module.eks.cluster_security_group_id
+}
+
+
