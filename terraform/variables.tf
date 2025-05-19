@@ -173,6 +173,10 @@ variable "eks_metrics_server_version" {
   description = "Version of Metrics Server for EKS"
   type        = string
 }
+variable "eks_cluster_autoscaler_version" {
+  description = "Version of the EKS cluster"
+  type        = string
+}
 
 variable "eks_addon_pod_identity_version" {
   description = "Version of Pod Identity add-on for EKS"
@@ -247,6 +251,11 @@ variable "codebuild_compute_type" {
 variable "codebuild_image" {
   description = "Docker image for CodeBuild"
   type        = string
+}
+
+variable "enable_cluster_autoscaler_module" {
+  description = "Enable Cluster Autoscaler"
+  type        = bool
 }
 variable "frontend_tag" {
   description = "Tag for the frontend image"

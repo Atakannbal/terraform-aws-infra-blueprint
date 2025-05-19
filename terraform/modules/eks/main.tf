@@ -53,13 +53,17 @@ module "eks" {
   eks_managed_node_groups = {
     default = {
       min_size       = 2 
-      max_size       = 3
+      max_size       = 15
       desired_size   = 2
       # Use t3.micro instances for cost efficiency
       instance_types = var.eks_instance_type
       # Use a custom IAM role for the node group
       iam_role_arn   = aws_iam_role.eks_node_group_role.arn
       create_iam_role = false
+      tags = {
+        "k8s.io/cluster-autoscaler/enabled"                 = "true"
+        "k8s.io/cluster-autoscaler/${var.cluster_name}"     = "owned"
+      }
     }
   }
   # Allow public access to the cluster endpoint (restricted by CIDR)
