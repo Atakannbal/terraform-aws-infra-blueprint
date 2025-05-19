@@ -1,4 +1,5 @@
 .terraform*
+.vscode
 terraform.tfstate*
 awscli-bundle
 bastion-key*
