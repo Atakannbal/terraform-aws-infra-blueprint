@@ -9,7 +9,8 @@ metadata:
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.frontend.certArn }}
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
     alb.ingress.kubernetes.io/ssl-redirect: "443"
-    external-dns.alpha.kubernetes.io/hostname: {{ .Values.frontend.hostname }}
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.frontend.alb_hostname }}
+    external-dns.alpha.kubernetes.io/ingress-hostname-source: annotation-only
     meta.helm.sh/release-name: {{ .Release.Name }}
     meta.helm.sh/release-namespace: {{ .Release.Namespace }}
   labels:
@@ -17,7 +18,17 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-  - host: {{ .Values.frontend.hostname }}
+  - host: {{ .Values.frontend.alb_hostname }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+  - host: {{ .Values.frontend.cloudfront_hostname }}
     http:
       paths:
       - path: /
