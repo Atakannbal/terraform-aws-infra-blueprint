@@ -38,6 +38,10 @@ variable "enable_codebuild_module" {
   type        = bool
 }
 
+variable "enable_external_secrets_module" {
+  description = "Enable External Secrets module"
+  type        = bool
+}
 
 
 variable "enable_vpc_module" {
