@@ -5,7 +5,7 @@
 ```
 
 ## 📝 Overview
-This project provisions a full-stack application infrastructure on AWS using Terraform. It emphasizes infrastructure as code, automating the deployment of networking, compute, storage, CI/CD, monitoring, and security resources. The stack includes a React frontend, Java backend, and PostgreSQL database, all orchestrated with modern AWS and Kubernetes services for scalability and maintainability.
+This project provisions a full-stack application infrastructure on AWS using Terraform. It focuses on infrastructure as code, automating the deployment of networking, compute, storage, CI/CD, monitoring, and security resources. The stack includes a React frontend, Java backend, and PostgreSQL database, all orchestrated with modern AWS and Kubernetes services for scalability and maintainability.
 
 ## ⚙️ Pre-requisites
 1. 🏗️ Terraform
