@@ -1,7 +1,7 @@
 # 📘 AWS Infrastructure blueprint with Terraform
 
 ```
-⚠️  This project is currently under development. While you can explore, provide feedback or contribute, please note that some aspects may change as I continue to improve it. Thank you for your understanding!
+⚠️  This project is currently under development.
 ```
 
 ## 📝 Overview
