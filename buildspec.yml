@@ -20,6 +20,8 @@ phases:
     commands:
       - echo Check access to ECR
       - nslookup api.ecr.eu-central-1.amazonaws.com
+      - echo Check HTTPS access to ECR
+      - curl -v https://980921750296.dkr.ecr.eu-central-1.amazonaws.com
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $BACKEND_REPOSITORY_URI
