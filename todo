@@ -1,4 +1,5 @@
 # Todo
+[] Run terraform on GH Action pipeline
 [] Experiment RDS to Aurora migration
 [] Experiment using ECS
 [] Experiment using Fargate
