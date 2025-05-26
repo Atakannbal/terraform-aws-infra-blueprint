@@ -24,6 +24,9 @@ phases:
       - $(aws ecr get-login --no-include-email --region $AWS_REGION)
   build:
     commands:
+      - set -x
+      - echo "START BUILD PHASE"
+      - ls -alh
       - echo Building and pushing backend Docker image...
       - docker build -t $BACKEND_REPOSITORY_URI:latest ./backend
       - docker push $BACKEND_REPOSITORY_URI:latest
@@ -32,9 +35,12 @@ phases:
       - docker push $FRONTEND_REPOSITORY_URI:latest
       - echo Updating kubeconfig and deploying to EKS...
       - aws eks update-kubeconfig --region $AWS_REGION --name ce-task-prod-eks-cluster
+      - helm version
+      - kubectl version --client
       - helm upgrade --install app ./modules/app/helm \
           --set frontend.image=$FRONTEND_REPOSITORY_URI:latest \
           --set backend.image=$BACKEND_REPOSITORY_URI:latest
+      - echo "END BUILD PHASE"
 artifacts:
   files:
     - '**/*'
