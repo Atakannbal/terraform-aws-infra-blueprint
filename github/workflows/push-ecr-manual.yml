@@ -1,0 +1,56 @@
+name: Build and Deploy to ECR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push Backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./~learning/eks-terraform-aws/backend
+          push: true
+          tags: |
+            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:${{ github.ref_name }}
+            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./~learning/eks-terraform-aws/frontend
+          push: true
+          tags: | 
+            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:${{ github.ref_name }}
+            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
