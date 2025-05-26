@@ -1,5 +1,11 @@
 version: 0.2
 
+env:
+  variables:
+    BACKEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-task-prod-backend-ecr
+    FRONTEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-task-prod-frontend-ecr
+    AWS_REGION: eu-central-1
+
 phases:
   install:
     runtime-versions:
@@ -19,16 +25,16 @@ phases:
   build:
     commands:
       - echo Building and pushing backend Docker image...
-      - docker build -t $REPOSITORY_URI/ce-task-prod-backend-ecr:latest ./backend
-      - docker push $REPOSITORY_URI/ce-task-prod-backend-ecr:latest
+      - docker build -t $BACKEND_REPOSITORY_URI/ce-task-prod-backend-ecr:latest ./backend
+      - docker push $BACKEND_REPOSITORY_URI/ce-task-prod-backend-ecr:latest
       - echo Building and pushing frontend Docker image...
-      - docker build -t $REPOSITORY_URI/ce-task-prod-frontend-ecr:latest ./frontend
-      - docker push $REPOSITORY_URI/ce-task-prod-frontend-ecr:latest
+      - docker build -t $FRONTEND_REPOSITORY_URI/ce-task-prod-frontend-ecr:latest ./frontend
+      - docker push $FRONTEND_REPOSITORY_URI/ce-task-prod-frontend-ecr:latest
       - echo Updating kubeconfig and deploying to EKS...
       - aws eks update-kubeconfig --region $AWS_REGION --name ce-task-prod-eks-cluster
       - helm upgrade --install app ./modules/app/helm \
-          --set frontend.image=$REPOSITORY_URI/ce-task-prod-frontend-ecr:latest \
-          --set backend.image=$REPOSITORY_URI/ce-task-prod-backend-ecr:latest
+          --set frontend.image=$FRONTEND_REPOSITORY_URI/ce-task-prod-frontend-ecr:latest \
+          --set backend.image=$BACKEND_REPOSITORY_URI/ce-task-prod-backend-ecr:latest
 artifacts:
   files:
     - '**/*'
