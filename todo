@@ -2,9 +2,10 @@
 [] Experiment RDS to Aurora migration
 [] Experiment using ECS
 [] Experiment using Fargate
-[] Architecture diagram
 
 # In-progress
+[] Run terraform on GH Action pipeline
+[] Architecture diagram
 
 
 # Blocked
