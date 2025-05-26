@@ -1,0 +1,24 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo "Installing dependencies..."
+      - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.29.0/2024-01-04/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mv ./kubectl /usr/local/bin/kubectl
+      - curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+      - chmod 700 get_helm.sh
+      - ./get_helm.sh
+      - echo "Installing Docker..."
+      - yum update -y
+      - yum install -y docker
+      - service docker start
+      - usermod -aG docker codebuild-user
+  pre_build:
+    commands:
+      - echo "Environment setup complete"
+cache:
+  paths:
+    - '/usr/local/bin/kubectl'
+    - '/usr/local/bin/helm'
+    - '/var/lib/docker'
