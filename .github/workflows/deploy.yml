@@ -1,45 +1,17 @@
-name: Build and Deploy to ECR and EKS using CodeBuild
+name: Trigger CodeBuild
 
 on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    runs-on: ce-task-prod-codebuild-${{ github.run_id }}-${{ github.run_attempt }}
+  trigger-codebuild:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Trigger AWS CodeBuild
+        uses: aws-actions/aws-codebuild-run-build@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build and Push Backend
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:${{ github.ref_name }} \
-            -t ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:latest \
-            ./~learning/eks-terraform-aws/backend
-          docker push ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:${{ github.ref_name }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:latest
-
-      - name: Build and Push Frontend
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:${{ github.ref_name }} \
-            -t ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:latest \
-            ./~learning/eks-terraform-aws/frontend
-          docker push ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:${{ github.ref_name }}
-          docker push ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:latest
-
-      - name: Deploy to EKS
-        run: |
-          aws eks update-kubeconfig --region eu-central-1 --name ce-task-prod-eks-cluster
-          helm upgrade --install app ./~learning/eks-terraform-aws/modules/app/helm \
-            --set frontend.image=${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:latest \
-            --set backend.image=${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:latest
+          project-name: ce-task-prod-codebuild
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-central-1

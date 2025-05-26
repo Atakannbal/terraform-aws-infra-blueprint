@@ -1,0 +1,48 @@
+version: 0.2
+
+env:
+  variables:
+    BACKEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-task-prod-backend-ecr
+    FRONTEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-task-prod-frontend-ecr
+    AWS_REGION: eu-central-1
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm install -g aws-cdk
+      - curl -sSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+  pre_build:
+    commands:
+      - echo Check access to ECR
+      - nslookup api.ecr.eu-central-1.amazonaws.com
+      - echo Check HTTPS access to ECR
+      - curl -v https://980921750296.dkr.ecr.eu-central-1.amazonaws.com
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $BACKEND_REPOSITORY_URI
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $FRONTEND_REPOSITORY_URI
+  build:
+    commands:
+      - set -x
+      - echo "START BUILD PHASE"
+      - ls -alh
+      - echo Building and pushing backend Docker image...
+      - docker build -t $BACKEND_REPOSITORY_URI:latest ./backend
+      - docker push $BACKEND_REPOSITORY_URI:latest
+      - echo Building and pushing frontend Docker image...
+      - docker build -t $FRONTEND_REPOSITORY_URI:latest ./frontend
+      - docker push $FRONTEND_REPOSITORY_URI:latest
+      - echo Updating kubeconfig and deploying to EKS...
+      - aws eks update-kubeconfig --region $AWS_REGION --name ce-task-prod-eks-cluster
+      - helm version
+      - kubectl version --client
+      - helm upgrade --install app ./terraform/modules/app/helm --set frontend.image=$FRONTEND_REPOSITORY_URI:latest --set backend.image=$BACKEND_REPOSITORY_URI:latest
+      - echo "END BUILD PHASE"
+artifacts:
+  files:
+    - '**/*'
