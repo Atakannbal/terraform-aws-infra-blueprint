@@ -1,0 +1,34 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+      nodejs: 18
+    commands:
+      - echo Installing dependencies...
+      - npm install -g aws-cdk
+      - curl -sSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --no-include-email --region $AWS_REGION)
+  build:
+    commands:
+      - echo Building and pushing backend Docker image...
+      - docker build -t $REPOSITORY_URI/ce-task-prod-backend-ecr:latest ./backend
+      - docker push $REPOSITORY_URI/ce-task-prod-backend-ecr:latest
+      - echo Building and pushing frontend Docker image...
+      - docker build -t $REPOSITORY_URI/ce-task-prod-frontend-ecr:latest ./frontend
+      - docker push $REPOSITORY_URI/ce-task-prod-frontend-ecr:latest
+      - echo Updating kubeconfig and deploying to EKS...
+      - aws eks update-kubeconfig --region $AWS_REGION --name ce-task-prod-eks-cluster
+      - helm upgrade --install app ./modules/app/helm \
+          --set frontend.image=$REPOSITORY_URI/ce-task-prod-frontend-ecr:latest \
+          --set backend.image=$REPOSITORY_URI/ce-task-prod-backend-ecr:latest
+artifacts:
+  files:
+    - '**/*'
