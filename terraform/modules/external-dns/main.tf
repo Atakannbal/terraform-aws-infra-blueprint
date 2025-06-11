@@ -1,9 +1,3 @@
-# Route 53 hosted zone for the domain
-resource "aws_route53_zone" "primary" {
-  name = var.hosted_zone_domain_name
-  force_destroy = true # Allow deletion of the hosted zone even if it has records
-}
-
 # IAM role for External DNS to manage Route 53 records
 resource "aws_iam_role" "external_dns" {
   name = "${var.project_name}-${var.environment}-external-dns-role"
@@ -43,7 +37,7 @@ resource "aws_iam_role_policy" "external_dns_policy" {
           "route53:ChangeResourceRecordSets"
         ]
         Resource = [
-          "arn:aws:route53:::hostedzone/${aws_route53_zone.primary.zone_id}"
+          "arn:aws:route53:::hostedzone/${var.hosted_zone_id}",
         ]
       },
       {
@@ -57,8 +51,6 @@ resource "aws_iam_role_policy" "external_dns_policy" {
       }
     ]
   })
-
-  depends_on = [aws_route53_zone.primary]
 }
 
 # Helm release for External DNS to manage Route 53 records
@@ -66,6 +58,7 @@ resource "helm_release" "external_dns" {
   name       = "external-dns"
   chart      = "${path.module}/helm"
   namespace  = "kube-system"
+  upgrade_install = true
 
   # IAM role ARN for External DNS
   set {
@@ -110,11 +103,10 @@ resource "null_resource" "cleanup_route53" {
 
   provisioner "local-exec" {
     command = <<EOT
-    aws route53 list-resource-record-sets --hosted-zone-id ${aws_route53_zone.primary.zone_id} | \
+    aws route53 list-resource-record-sets --hosted-zone-id ${var.hosted_zone_id} | \
     jq -r '.ResourceRecordSets[] | select(.Type != "NS" and .Type != "SOA") | .Name' | \
-    xargs -I {} aws route53 change-resource-record-sets --hosted-zone-id ${aws_route53_zone.primary.zone_id} --change-batch '{"Changes":[{"Action":"DELETE","ResourceRecordSet":{"Name":"{}","Type":"A","TTL":300,"ResourceRecords":[{"Value":"192.0.2.1"}]}}]}'
+    xargs -I {} aws route53 change-resource-record-sets --hosted-zone-id ${var.hosted_zone_id} --change-batch '{"Changes":[{"Action":"DELETE","ResourceRecordSet":{"Name":"{}","Type":"A","TTL":300,"ResourceRecords":[{"Value":"192.0.2.1"}]}}]}'
     EOT
   }
 
-  depends_on = [aws_route53_zone.primary]
 }

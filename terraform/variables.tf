@@ -33,6 +33,11 @@ variable "cloudfront_domain_name" {
   type = string
 }
 
+variable "enable_route53_module" {
+  description = "Enable Route53 module"
+  type = bool
+}
+
 variable "enable_codebuild_module" {
   description = "Enable CodeBuild module"
   type        = bool
@@ -42,7 +47,6 @@ variable "enable_external_secrets_module" {
   description = "Enable External Secrets module"
   type        = bool
 }
-
 
 variable "enable_vpc_module" {
   description = "Enable VPC module"
@@ -229,24 +233,6 @@ variable "rds_master_credentials_user" {
 variable "sns_subscriber_email_address" {
   description = "Email address for SNS subscription"
   type        = string
-}
-
-variable "custom_header_secret" {
-  description = "Secret value for custom header to secure ALB"
-  type        = string
-  sensitive   = true
-}
-
-variable "webhook_secret" {
-  description = "Webhook secret for CodeBuild"
-  type        = string
-  sensitive   = true
-}
-
-variable "github_pat" {
-  description = "GitHub Personal Access Token"
-  type        = string
-  sensitive   = true
 }
 
 variable "codebuild_github_repo" {

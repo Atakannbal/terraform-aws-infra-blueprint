@@ -1,0 +1,42 @@
+installCRDs: true
+serviceAccount:
+  create: false
+  name: "external-secrets-operator"
+extraObjects:
+  - apiVersion: external-secrets.io/v1
+    kind: ClusterSecretStore
+    metadata:
+      name: aws-secretsmanager
+    spec:
+      provider:
+        aws:
+          service: SecretsManager
+          region: eu-central-1
+          auth:
+            jwt:
+              serviceAccountRef:
+                name: external-secrets-operator
+                namespace: kube-system
+  - apiVersion: external-secrets.io/v1
+    kind: ExternalSecret
+    metadata:
+      name: db-credentials
+      namespace: default
+    spec:
+      refreshInterval: 5m
+      secretStoreRef:
+        name: aws-secretsmanager
+        kind: ClusterSecretStore
+      target:
+        name: db-credentials
+        creationPolicy: Owner
+      data:
+        - secretKey: DB_USER
+          remoteRef:
+            key: "{{ .Values.rds_secret_arn }}"
+            property: username
+        - secretKey: DB_PASSWORD
+          remoteRef:
+            key: "{{ .Values.rds_secret_arn }}"
+            property: password
+rds_secret_arn: "{{ .Values.rds_secret_arn }}" # Placeholder for Terraform to override

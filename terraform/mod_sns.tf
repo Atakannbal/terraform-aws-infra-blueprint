@@ -8,4 +8,6 @@ module "sns" {
   cluster_name                 = module.eks[0].cluster_name
   
   sns_subscriber_email_address = var.sns_subscriber_email_address
+
+  depends_on = [ module.vpc, module.eks ]
 }

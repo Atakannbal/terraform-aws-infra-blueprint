@@ -40,6 +40,7 @@ resource "aws_iam_role_policy_attachment" "eks_node_group_cni_policy" {
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "20.14.0"
+  
 
   cluster_name    = var.cluster_name
   cluster_version = var.eks_cluster_version
@@ -66,6 +67,21 @@ module "eks" {
       }
     }
   }
+
+  
+  cluster_addons = {
+    vpc-cni = {
+      before_compute = true
+      most_recent    = true
+      configuration_values = jsonencode({
+        env = {
+          ENABLE_PREFIX_DELEGATION = "true"
+          WARM_PREFIX_TARGET       = "1"
+        }
+      })
+    }
+  }
+  
   # Allow public access to the cluster endpoint (restricted by CIDR)
   cluster_endpoint_public_access       = true
   cluster_endpoint_public_access_cidrs = var.cidr_external_access

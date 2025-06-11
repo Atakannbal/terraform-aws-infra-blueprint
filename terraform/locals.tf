@@ -7,4 +7,5 @@ locals {
   bastion_exists     = length(module.bastion) > 0
   ext_dns_exists     = length(module.ext-dns) > 0
   cloudfront_exists  = length(module.cloudfront) > 0
+  route53_exists     = length(module.route53) > 0
 }

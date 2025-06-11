@@ -12,5 +12,5 @@ module "cloudwatch" {
   pod_identity_version              = var.eks_addon_pod_identity_version
   cloudwatchContainerInsights_version = var.eks_addon_cloudwatch_containerinsights_version
 
-  depends_on                        = [module.vpc, module.eks, module.cluster_autoscaler]
+  depends_on                        = [module.vpc, module.eks]
 }
