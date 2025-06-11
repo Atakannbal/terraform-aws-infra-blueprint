@@ -41,7 +41,58 @@ resource "aws_codebuild_project" "eks_deploy" {
     type  = "LOCAL"
     modes = ["LOCAL_DOCKER_LAYER_CACHE", "LOCAL_SOURCE_CACHE"]
   }
+  logs_config {
+    cloudwatch_logs {
+      status     = "ENABLED"
+      group_name = "/aws/codebuild/${var.project_name}-${var.environment}-codebuild"
+    }
+  }
 }
+
+resource "aws_codebuild_project" "terraform" {
+  name          = "${var.project_name}-${var.environment}-codebuild-terraform"
+  description   = "Run GitHub Actions jobs to deploy to EKS"
+  service_role  = aws_iam_role.codebuild_role.arn
+  environment {
+    compute_type                = var.compute_type
+    image                       = var.image
+    type                        = "LINUX_CONTAINER"
+    privileged_mode             = true
+    environment_variable {
+      name  = "EKS_CLUSTER_NAME"
+      value = var.cluster_name
+    }
+    environment_variable {
+      name  = "AWS_REGION"
+      value = var.region
+    }
+  }
+  source {
+    type            = "GITHUB"
+    location        = var.github_repo
+    git_clone_depth = 1
+    buildspec       = "buildspec-terraform.yml"
+  }
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+  vpc_config {
+    vpc_id             = var.vpc_id
+    subnets            = var.subnet_ids
+    security_group_ids = [aws_security_group.codebuild_sg.id]
+  }
+  cache {
+    type  = "LOCAL"
+    modes = ["LOCAL_DOCKER_LAYER_CACHE", "LOCAL_SOURCE_CACHE"]
+  }
+  logs_config {
+    cloudwatch_logs {
+      status     = "ENABLED"
+      group_name = "/aws/codebuild/${var.project_name}-${var.environment}-codebuild-terraform"
+    }
+  }
+}
+
 
 # Security Group for CodeBuild
 resource "aws_security_group" "codebuild_sg" {
@@ -81,6 +132,7 @@ resource "aws_iam_role_policy" "codebuild_policy" {
         Action   = [
           "eks:DescribeCluster",
           "eks:ListClusters",
+          "eks:AccessKubernetesApi",
           "s3:*",
           "ecr:*",
           "logs:*",
@@ -129,22 +181,88 @@ resource "aws_codebuild_webhook" "github" {
   }
 }
 
-# Webhook Secret
-resource "aws_ssm_parameter" "webhook_secret" {
-  name  = "/codebuild/webhook-secret"
-  type  = "SecureString"
-  value = var.webhook_secret
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.${var.region}.ecr.api"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = var.subnet_ids
+  security_group_ids = [aws_security_group.codebuild_sg.id]
+  private_dns_enabled = true
 }
 
-# IAM Policy for SSM Access
-resource "aws_iam_role_policy" "codebuild_ssm" {
-  role = aws_iam_role.codebuild_role.name
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect   = "Allow"
-      Action   = ["ssm:GetParameter"]
-      Resource = aws_ssm_parameter.webhook_secret.arn
-    }]
-  })
+# ECR Docker Endpoint
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.${var.region}.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = var.subnet_ids
+  security_group_ids = [aws_security_group.codebuild_sg.id]
+  private_dns_enabled = true
+}
+
+# EKS Endpoint
+resource "aws_vpc_endpoint" "eks" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.${var.region}.eks"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = var.subnet_ids
+  security_group_ids = [aws_security_group.codebuild_sg.id]
+  private_dns_enabled = true
+}
+
+# Add STS VPC Endpoint for CodeBuild in VPC
+resource "aws_vpc_endpoint" "sts" {
+  vpc_id              = var.vpc_id
+  service_name        = "com.amazonaws.${var.region}.sts"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = var.subnet_ids
+  security_group_ids  = [aws_security_group.codebuild_sg.id]
+  private_dns_enabled = true
+}
+
+# Allow CodeBuild SG to access ECR API endpoint
+resource "aws_security_group_rule" "ecr_api_from_codebuild" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.codebuild_sg.id
+  source_security_group_id = aws_security_group.codebuild_sg.id
+  description              = "Allow HTTPS from CodeBuild to ECR API endpoint"
+}
+
+data "kubernetes_config_map_v1" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+}
+
+resource "kubernetes_config_map_v1_data" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  force = true
+
+  data = {
+    mapRoles = yamlencode(
+      distinct(concat(
+        yamldecode(data.kubernetes_config_map_v1.aws_auth.data["mapRoles"]),
+        [
+          {
+            rolearn  = "arn:aws:iam::980921750296:role/ce-task-eks-node-group-role"
+            username = "system:node:{{EC2PrivateDNSName}}"
+            groups   = ["system:bootstrappers", "system:nodes"]
+          },
+          {
+            rolearn  = aws_iam_role.codebuild_role.arn
+            username = "codebuild"
+            groups   = ["system:masters"]
+          }
+        ]
+      ))
+    )
+  }
 }

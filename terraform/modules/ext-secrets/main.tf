@@ -14,6 +14,8 @@ resource "helm_release" "external_secrets" {
   chart      = "external-secrets"
   namespace  = "kube-system"
   version    = var.external_secrets_helm_version
+  
+
 
   set {
     name  = "installCRDs"
@@ -29,6 +31,12 @@ resource "helm_release" "external_secrets" {
     name  = "serviceAccount.name"
     value = "external-secrets-operator"
   }
+
+ # values = [
+ #   templatefile("${path.module}/helm/values.yaml", {
+ #     rds_secret_arn = var.rds_secret_arn
+ #   })
+ # ]
 
   depends_on = [ kubernetes_service_account.external_secrets ]
 }
@@ -91,7 +99,13 @@ resource "kubernetes_service_account" "external_secrets" {
   }
 }
 
+resource "time_sleep" "wait_for_crd" {
+  depends_on = [helm_release.external_secrets]
+  create_duration = "150s" # Adjust duration as needed (e.g., 60s)
+}
+
 # Wait for SecretStore CRD to be established before applying manifests
+/*
 resource "null_resource" "wait_for_secretstore_crd" {
   depends_on = [helm_release.external_secrets]
   provisioner "local-exec" {
@@ -105,7 +119,9 @@ resource "null_resource" "wait_for_secretstore_crd" {
     EOT
   }
 }
+*/
 
+/*
 resource "kubectl_manifest" "secretstore" {
   yaml_body = <<-EOF
     apiVersion: external-secrets.io/v1
@@ -123,9 +139,11 @@ resource "kubectl_manifest" "secretstore" {
                 name: external-secrets-operator
                 namespace: kube-system
   EOF
-  depends_on = [null_resource.wait_for_secretstore_crd]
+  depends_on = [helm_release.external_secrets]
 }
+*/
 
+/*
 resource "kubectl_manifest" "db_credentials" {
   yaml_body = <<-EOF
     apiVersion: external-secrets.io/v1
@@ -153,3 +171,4 @@ resource "kubectl_manifest" "db_credentials" {
   EOF
   depends_on = [kubectl_manifest.secretstore]
 }
+*/

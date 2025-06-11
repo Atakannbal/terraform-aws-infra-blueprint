@@ -64,6 +64,7 @@ resource "helm_release" "app" {
   name       = "app"
   chart      = "${path.module}/helm"
   namespace  = "default"
+  upgrade_install = true
   
   # Frontend image URL
   set {
@@ -107,5 +108,11 @@ resource "helm_release" "app" {
   set {
     name  = "projectName"
     value = var.project_name
+  }
+
+  # RDS secret ARN
+  set {
+    name = "rds_secret_arn"
+    value = var.rds_secret_arn
   }
 }

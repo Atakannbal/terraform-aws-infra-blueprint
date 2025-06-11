@@ -13,5 +13,5 @@ module "external_secrets" {
   rds_secret_arn                = module.rds[0].db_instance_master_user_secret_arn
   rds_secret_name               = module.rds[0].db_instance_identifier
 
-  depends_on                    = [module.eks, module.rds, module.cluster_autoscaler]
+  depends_on                    = [module.eks, module.rds]
 }

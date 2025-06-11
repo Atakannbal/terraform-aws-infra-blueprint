@@ -100,11 +100,6 @@ rds_master_credentials_user = ""
 sns_subscriber_email_address = ""
 
 ##################
-### CLOUDFRONT ###
-##################
-custom_header_secret = ""
-
-##################
 ### CODEBUILD ####
 ##################
 webhook_secret = ""

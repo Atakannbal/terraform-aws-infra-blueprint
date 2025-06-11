@@ -1,6 +1,6 @@
 output "name_servers" {
   description = "Name servers for the Route53 hosted zone"
-  value = local.ext_dns_exists ? module.ext-dns[0].route53_name_servers : ["No name servers available"]
+  value = local.route53_exists ? module.route53[0].route53_name_servers : ["No name servers available"]
 }
 
 output "bastion_ssh_command" {

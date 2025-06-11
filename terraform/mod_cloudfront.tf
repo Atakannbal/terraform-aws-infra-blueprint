@@ -9,11 +9,11 @@ module "cloudfront" {
 
   cloudfront_domain_name    = var.cloudfront_domain_name
   load_balancer_domain_name = var.load_balancer_domain_name
-  route53_zone_id           = module.ext-dns[0].route53_zone_id
+  route53_zone_id           = module.route53[0].route53_zone_id
 
   providers = {
     aws = aws.us_east_1
   }
 
-  depends_on = [module.vpc, module.eks, module.alb, module.ext-dns, module.app]
+  depends_on = [module.vpc, module.eks, module.alb, module.ext-dns, module.app, module.route53]
 }

@@ -5,5 +5,5 @@ module "hpa" {
   environment  = var.environment
   region       = var.region
 
-  depends_on   = [module.app, module.eks, module.cluster_autoscaler]
+  depends_on   = [module.app, module.eks]
 }

@@ -45,12 +45,6 @@ variable "eks_cluster_security_group_id" {
   type        = string
 }
 
-variable "webhook_secret" {
-  description = "GitHub webhook secret."
-  type        = string
-  sensitive   = true
-}
-
 variable "eks_role_arn" {
   description = "IAM role ARN for EKS cluster."
   type        = string

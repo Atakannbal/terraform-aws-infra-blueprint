@@ -1,7 +1,7 @@
 # SSH key pair for the bastion host
 resource "aws_key_pair" "ce_task_key" {
   key_name   = "${var.project_name}-${var.environment}-bastion-key"
-  public_key = file("${path.module}/bastion-key.pub")
+  public_key = data.aws_ssm_parameter.bastion_public_key.value
 }
 
 # Security group for the bastion host

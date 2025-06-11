@@ -4,6 +4,7 @@ resource "helm_release" "metrics_server" {
   chart      = "metrics-server"
   namespace  = "kube-system"
   version    = var.eks_metrics_server_version
+  upgrade_install = true
 
   set {
     name  = "resources.requests.cpu"

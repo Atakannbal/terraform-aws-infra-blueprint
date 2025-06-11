@@ -7,5 +7,5 @@ module "metrics" {
 
   eks_metrics_server_version = var.eks_metrics_server_version
 
-  depends_on               = [module.eks, module.cluster_autoscaler]
+  depends_on               = [module.eks]
 }

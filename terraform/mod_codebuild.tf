@@ -10,13 +10,13 @@ module "codebuild" {
   compute_type                  = var.codebuild_compute_type
   image                         = var.codebuild_image
   github_repo                   = var.codebuild_github_repo
-  webhook_secret                = var.webhook_secret
-  github_pat                    = var.github_pat
-
+  github_pat                    = jsondecode(data.aws_secretsmanager_secret_version.codebuild_version[0].secret_string)["github_pat"]
+  
   cluster_name                  = module.eks[0].cluster_name
   eks_role_arn                  = module.eks[0].eks_cluster_iam_role_arn
   eks_cluster_security_group_id = module.eks[0].cluster_security_group_id
-  subnet_ids                    = module.vpc[0].public_subnets
+  subnet_ids                    = module.vpc[0].private_subnets
 
   depends_on                    = [module.vpc, module.eks]
+  
 }

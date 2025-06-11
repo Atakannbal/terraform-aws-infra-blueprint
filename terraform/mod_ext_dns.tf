@@ -10,11 +10,12 @@ module "ext-dns" {
   cluster_name              = module.eks[0].cluster_name
 
   account_id                = data.aws_caller_identity.current.account_id
+  hosted_zone_id            = module.route53[0].route53_zone_id
   hosted_zone_domain_name   = var.hosted_zone_domain_name
   cloudfront_domain_name    = var.cloudfront_domain_name
   eks_external_dns_version  = var.eks_external_dns_version
 
   oidc_provider             = module.eks[0].oidc_provider
 
-  depends_on                = [module.vpc, module.eks, module.cluster_autoscaler]
+  depends_on                = [module.vpc, module.eks]
 }

@@ -34,6 +34,7 @@ resource "helm_release" "aws_load_balancer_controller" {
   namespace  = "kube-system"
   version    = var.alb_controller_version
   depends_on = [kubernetes_service_account.aws_load_balancer_controller]
+  upgrade_install = true
 
   set {
     name  = "clusterName"

@@ -13,5 +13,5 @@ module "alb" {
 
   oidc_provider               = module.eks[0].oidc_provider
 
-  depends_on                  = [module.vpc, module.eks, module.cluster_autoscaler]
+  depends_on                  = [module.vpc, module.eks]
 }
