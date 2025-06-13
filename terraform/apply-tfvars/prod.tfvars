@@ -13,29 +13,26 @@ cloudfront_domain_name = "prod.ce-project-aws.atakanbal.com"
 ##############################
 ### Enable/Disable modules ###
 ##############################
-enable_ecr_module = false # Elastic Container Registry
-enable_route53_module = false # Route 53
-enable_vpc_module = false # Virtual Private Cloud
-#---------------------------------------------------
-enable_eks_module = false # Elastic Kubernetes Service
-enable_bastion_module = false # Bastion Instance
-#---------------------------------------------------
-enable_rds_module = false # Relational Database Service
-enable_codebuild_module = false # CodeBuild
-enable_cluster_autoscaler_module = false # Cluster Autoscaler
-enable_external_dns_module = false # External DNS
-enable_alb_module = false # Application Load Balancer
-enable_hpa_module = false # Horizontal Pod Autoscaler
-enable_cloudwatch_module = false # Cloudwatch
-enable_metrics_server_module = false # Metrics server
-enable_sns_module = false # Simple Notification Service
-#---------------------------------------------------
-enable_external_secrets_module = false # External Secret Operator
-#---------------------------------------------------
-enable_app_module = false # Backend, Frontend, ClusterSecretStore, ExternalSecret
-#---------------------------------------------------
-enable_cloudfront_module = false # Cloudfront
-#---------------------------------------------------
+enable_ecr_module = true                    # Elastic Container Registry
+enable_route53_module = true                # Route 53
+enable_vpc_module = true                    # Virtual Private Cloud
+
+enable_eks_module = true                   # Elastic Kubernetes Service
+enable_bastion_module = false                # Bastion Instance
+
+enable_rds_module = false                    # Relational Database Service
+enable_codebuild_module = false              # CodeBuild
+enable_cluster_autoscaler_module = true     # Cluster Autoscaler
+enable_external_dns_module = false           # External DNS
+enable_alb_module = false                    # Application Load Balancer
+enable_hpa_module = false                    # Horizontal Pod Autoscaler
+enable_cloudwatch_module = false             # Cloudwatch
+enable_metrics_server_module = false         # Metrics server
+enable_sns_module = false                    # Simple Notification Service
+
+enable_external_secrets_module = false      # External Secret Operator
+enable_app_module = false                   # Application
+enable_cloudfront_module = false            # Cloudfront
 
 ###########
 ### APP ###
