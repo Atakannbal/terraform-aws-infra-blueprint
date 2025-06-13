@@ -50,24 +50,8 @@ module "eks" {
   # Place EKS nodes in private subnets for security
   subnet_ids      = var.subnet_ids
 
-  # Define the EKS managed node group
-  eks_managed_node_groups = {
-    default = {
-      min_size       = 2 
-      max_size       = 15
-      desired_size   = 2
-      # Use t3.micro instances for cost efficiency
-      instance_types = var.eks_instance_type
-      # Use a custom IAM role for the node group
-      iam_role_arn   = aws_iam_role.eks_node_group_role.arn
-      create_iam_role = false
-      tags = {
-        "k8s.io/cluster-autoscaler/enabled"                 = "true"
-        "k8s.io/cluster-autoscaler/${var.cluster_name}"     = "owned"
-      }
-    }
-  }
-
+  # Explicityle disable node group creation in the module
+  eks_managed_node_groups = {}
   
   cluster_addons = {
     vpc-cni = {
@@ -91,4 +75,30 @@ module "eks" {
   enable_irsa                          = true
   # Grant admin permissions to the cluster creator
   enable_cluster_creator_admin_permissions = true
+}
+
+resource "aws_eks_node_group" "default" {
+  cluster_name    = module.eks.cluster_name
+  node_group_name = "${var.cluster_name}-default-ng"
+  node_role_arn   = aws_iam_role.eks_node_group_role.arn
+  subnet_ids      = var.subnet_ids
+
+  scaling_config {
+    desired_size = 2
+    max_size     = 15
+    min_size     = 2
+  }
+
+  instance_types = var.eks_instance_type
+
+  # Ensure the node group is created after the cluster and VPC CNI addon
+  depends_on = [
+    module.eks.cluster_id,
+    module.eks.cluster_addons
+  ]
+
+  tags = {
+    "k8s.io/cluster-autoscaler/enabled"             = "true"
+    "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
+  }
 }
