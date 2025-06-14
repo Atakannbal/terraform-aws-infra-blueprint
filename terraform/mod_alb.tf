@@ -7,7 +7,7 @@ module "alb" {
   region                      = var.region
 
   cluster_name                = module.eks[0].cluster_name
-
+  vpc_id                      = module.vpc[0].vpc_id
   account_id                  = data.aws_caller_identity.current.account_id
   alb_controller_version      = var.alb_controller_version
 
