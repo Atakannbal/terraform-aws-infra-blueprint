@@ -1,4 +1,7 @@
 # Todo
+[] Upgrade cluster version using blue green deployment
+[] Reduce NAT Gateway cost by utilizing VPC Endpoints
+[] Create dev branch and dev environment
 [] Experiment RDS to Aurora migration
 [] Experiment using ECS
 [] Experiment using Fargate
@@ -6,7 +9,6 @@
 # In-progress
 [] Run terraform on GH Action pipeline
 [] Architecture diagram
-
 
 # Blocked
 [-] WAF 

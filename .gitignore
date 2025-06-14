@@ -3,6 +3,5 @@
 terraform.tfstate*
 awscli-bundle
 bastion-key*
-dev.tfvars
-prod.tfvars
 .DS_Store
+local
