@@ -96,3 +96,12 @@ Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS 
 
 ### Check for NS records
 `dig www.example.com NS`
+
+### List all node groups in cluster
+`aws eks list-nodegroups --cluster-name ce-task-prod-eks-cluster --region eu-central-1`
+
+### Describe a specific node group:
+`aws eks describe-nodegroup --cluster-name ce-task-prod-eks-cluster --nodegroup-name default-2025061310573813980000000e --region eu-central-1`
+
+### Check the max pod capacity of EKS nodes
+`kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, maxPods: .status.allocatable.pods}'`
