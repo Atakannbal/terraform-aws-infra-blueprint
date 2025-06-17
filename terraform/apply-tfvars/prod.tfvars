@@ -17,7 +17,7 @@ enable_ecr_module = true                     # Elastic Container Registry
 enable_route53_module = true                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
 enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
 
-enable_eks_module = false                     # Elastic Kubernetes Service
+enable_eks_module = true                     # Elastic Kubernetes Service
 enable_bastion_module = false                # Bastion Instance
               
 enable_rds_module = false                    # Relational Database Service
