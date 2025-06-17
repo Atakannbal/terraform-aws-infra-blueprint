@@ -40,6 +40,21 @@ variable "eks_cluster_version" {
   type        = string
 }
 
+variable "eks_nodes_count" {
+  description = "Number of EKS nodes."
+  type        = number
+}
+
+variable "eks_min_nodes_count" {
+  description = "Minimum number of EKS nodes."
+  type        = number
+}
+
+variable "eks_max_nodes_count" {
+  description = "Maximum number of EKS nodes."
+  type        = number
+}
+
 variable "cidr_external_access" {
   description = "List of CIDR blocks allowed external access to the cluster."
   type        = list(string)
