@@ -35,3 +35,8 @@ variable "private_subnets" {
   type        = list(string)
 }
 
+variable "vpc_cidr_range" {
+  description = "CIDR range for the VPC."
+  type        = string
+}
+
