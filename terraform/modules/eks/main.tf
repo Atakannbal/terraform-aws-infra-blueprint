@@ -77,6 +77,79 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 }
 
+data "aws_ami" "eks_worker" {
+  most_recent = true
+  owners      = ["602401143452"] # Amazon EKS AMI account ID
+
+  filter {
+    name   = "name"
+    values = ["amazon-eks-node-${var.eks_cluster_version}-v*"]
+  }
+}
+
+resource "aws_launch_template" "self_ng" {
+  name_prefix   = "${var.cluster_name}-self-ng-"
+  image_id      = data.aws_ami.eks_worker.id
+  instance_type = var.eks_instance_type[0]
+  user_data     = base64encode(templatefile("${path.module}/userdata.tpl", {
+    cluster_name    = var.cluster_name
+    cluster_endpoint = module.eks.cluster_endpoint
+    certificate_authority_data  = module.eks.cluster_certificate_authority_data
+  }))
+}
+
+resource "aws_autoscaling_group" "self_ng" {
+  desired_capacity     = 1
+  max_size            = 5
+  min_size            = 1
+  vpc_zone_identifier = var.subnet_ids
+
+  launch_template {
+    id      = aws_launch_template.self_ng.id
+    version = "$Latest"
+  }
+
+  tag {
+    key                 = "kubernetes.io/cluster/${var.cluster_name}"
+    value               = "owned"
+    propagate_at_launch = true
+  }
+}
+
+resource "kubernetes_config_map" "aws_auth" {
+  metadata {
+    name      = "aws-auth"
+    namespace = "kube-system"
+  }
+
+  data = {
+    mapRoles = yamlencode([
+      {
+        rolearn  = "arn:aws:iam::980921750296:role/ce-task-eks-node-group-role"
+        username = "system:node:{{EC2PrivateDNSName}}"
+        groups   = [
+          "system:bootstrappers",
+          "system:nodes"
+        ]
+      }
+    ])
+  }
+}
+
+
+/*
+
+resource "aws_launch_template" "eks_ng" {
+  name = "${var.cluster_name}-ng-launch-template"
+  image_id      = null # Use EKS default AMI
+  instance_type = var.eks_instance_type[0]
+  user_data = base64encode(templatefile("${path.module}/userdata.tpl", {
+    cluster_name    = var.cluster_name
+    cluster_endpoint = module.eks.cluster_endpoint
+    certificate_authority_data  = module.eks.cluster_certificate_authority_data
+  }))
+}
+
 resource "aws_eks_node_group" "default" {
   cluster_name    = module.eks.cluster_name
   node_group_name = "${var.cluster_name}-default-ng"
@@ -84,12 +157,16 @@ resource "aws_eks_node_group" "default" {
   subnet_ids      = var.subnet_ids
 
   scaling_config {
-    desired_size = 2
-    max_size     = 15
-    min_size     = 2
+    desired_size = var.eks_nodes_count
+    max_size     = var.eks_max_nodes_count
+    min_size     = var.eks_min_nodes_count
   }
 
-  instance_types = var.eks_instance_type
+
+  launch_template {
+    id      = aws_launch_template.eks_ng.id
+    version = "$Latest"
+  }
 
   # Ensure the node group is created after the cluster and VPC CNI addon
   depends_on = [
@@ -102,3 +179,4 @@ resource "aws_eks_node_group" "default" {
     "k8s.io/cluster-autoscaler/${var.cluster_name}" = "owned"
   }
 }
+*/
