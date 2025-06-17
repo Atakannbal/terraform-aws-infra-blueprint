@@ -1,8 +1,12 @@
-# IAM role for External DNS to manage Route 53 records
+##########################################################################################################
+# This module provisions all resources required for External DNS integration with AWS Route 53.
+# Includes IAM role and policy for IRSA, Helm deployment, and cleanup automation for Route 53 records.
+# Enables automated DNS record management for Kubernetes services in your EKS cluster.
+##########################################################################################################
+
 resource "aws_iam_role" "external_dns" {
   name = "${var.project_name}-${var.environment}-external-dns-role"
 
-# Allow the External DNS service account to assume this role via IRSA
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -23,7 +27,6 @@ resource "aws_iam_role" "external_dns" {
   })
 }
 
-# IAM policy for External DNS to manage Route 53 records
 resource "aws_iam_role_policy" "external_dns_policy" {
   name   = "${var.project_name}-${var.environment}-external-dns-policy"
   role   = aws_iam_role.external_dns.id
@@ -53,20 +56,17 @@ resource "aws_iam_role_policy" "external_dns_policy" {
   })
 }
 
-# Helm release for External DNS to manage Route 53 records
 resource "helm_release" "external_dns" {
   name       = "external-dns"
   chart      = "${path.module}/helm"
   namespace  = "kube-system"
   upgrade_install = true
 
-  # IAM role ARN for External DNS
   set {
     name  = "roleArn"
     value = aws_iam_role.external_dns.arn
   }
 
-  # Domain filter to manage records for your domain
   set {
     name  = "domainFilter"
     value = var.hosted_zone_domain_name
@@ -77,13 +77,11 @@ resource "helm_release" "external_dns" {
     value = var.cloudfront_domain_name
   }
 
-  # Identifier for TXT records created by External DNS
   set {
     name  = "txtOwnerId"
     value = var.cluster_name
   }
   
-  # AWS region
   set {
     name  = "region"
     value = var.region
@@ -95,10 +93,10 @@ resource "helm_release" "external_dns" {
   }
 }
 
-
+/*
 resource "null_resource" "cleanup_route53" {
   triggers = {
-    destroy_trigger = "${var.vpc_id}" # Trigger only when the VPC is being destroyed
+    destroy_trigger = "${var.vpc_id}"
   }
 
   provisioner "local-exec" {
@@ -110,3 +108,4 @@ resource "null_resource" "cleanup_route53" {
   }
 
 }
+*/

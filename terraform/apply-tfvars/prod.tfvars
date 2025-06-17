@@ -1,8 +1,8 @@
 #########################
 ### General variables ###
 #########################
-project_name = "ce-task"
-environment = "prod"
+project_name = "ce-prj"
+environment = "prd"
 region = "eu-central-1"
 availability_zones = ["eu-central-1a", "eu-central-1b"]
 
@@ -13,26 +13,26 @@ cloudfront_domain_name = "prod.ce-project-aws.atakanbal.com"
 ##############################
 ### Enable/Disable modules ###
 ##############################
-enable_ecr_module = true                    # Elastic Container Registry
-enable_route53_module = true                # Route 53
-enable_vpc_module = true                    # Virtual Private Cloud
+enable_ecr_module = true                     # Elastic Container Registry
+enable_route53_module = true                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
+enable_codebuild_module = true              # CodeBuild
+enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
+enable_eks_module = true                     # Elastic Kubernetes Service
 
-enable_eks_module = true                   # Elastic Kubernetes Service
-enable_bastion_module = false                # Bastion Instance
-
-enable_rds_module = false                    # Relational Database Service
-enable_codebuild_module = false              # CodeBuild
+enable_bastion_module = true                # Bastion Instance
+              
+enable_rds_module = true                    # Relational Database Service
 enable_cluster_autoscaler_module = true     # Cluster Autoscaler
-enable_external_dns_module = false           # External DNS
-enable_alb_module = false                    # Application Load Balancer
-enable_hpa_module = false                    # Horizontal Pod Autoscaler
-enable_cloudwatch_module = false             # Cloudwatch
-enable_metrics_server_module = false         # Metrics server
-enable_sns_module = false                    # Simple Notification Service
+enable_alb_module = true                    # Application Load Balancer
+enable_external_dns_module = true           # External DNS
+enable_cloudwatch_module = true             # Cloudwatch
+enable_metrics_server_module = true         # Metrics server
+enable_sns_module = true                    # Simple Notification Service
 
-enable_external_secrets_module = false      # External Secret Operator
-enable_app_module = false                   # Application
-enable_cloudfront_module = false            # Cloudfront
+enable_external_secrets_module = true       # External Secret Operator
+enable_app_module = true                   # Application
+enable_hpa_module = true                    # Horizontal Pod Autoscaler
+enable_cloudfront_module = true             # Cloudfront
 
 ###########
 ### APP ###
@@ -60,7 +60,7 @@ eks_cluster_version = "1.31"
 eks_instance_type = ["t3.micro"]
 eks_nodes_count = 1
 eks_min_nodes_count = 1
-eks_max_nodes_count = 10
+eks_max_nodes_count = 7
 
 ###################
 ### Helm charts ###

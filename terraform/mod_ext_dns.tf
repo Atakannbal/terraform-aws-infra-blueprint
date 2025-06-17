@@ -17,5 +17,5 @@ module "ext-dns" {
 
   oidc_provider             = module.eks[0].oidc_provider
 
-  depends_on                = [module.vpc, module.eks]
+  depends_on                = [module.vpc, module.eks, module.alb]
 }

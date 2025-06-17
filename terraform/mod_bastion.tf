@@ -9,6 +9,7 @@ module "bastion" {
 
   cidr_bastion_access  = var.cidr_bastion_access
   subnet_id            = module.vpc[0].public_subnets[0]
+  eks_node_security_group_id = module.eks[0].node_security_group_id
 
-  depends_on           = [module.vpc]
+  depends_on           = [module.vpc, module.eks]
 }

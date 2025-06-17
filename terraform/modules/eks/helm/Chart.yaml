@@ -1,0 +1,4 @@
+apiVersion: v2
+name: eks-admins-rbac
+description: ClusterRoleBinding for EKS admins group
+version: 0.1.0

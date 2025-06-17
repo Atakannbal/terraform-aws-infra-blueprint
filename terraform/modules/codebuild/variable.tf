@@ -40,16 +40,6 @@ variable "subnet_ids" {
   type        = list(string)
 }
 
-variable "eks_cluster_security_group_id" {
-  description = "EKS cluster control plane security group ID."
-  type        = string
-}
-
-variable "eks_role_arn" {
-  description = "IAM role ARN for EKS cluster."
-  type        = string
-}
-
 variable "github_pat" {
   description = "GitHub Personal Access Token."
   type        = string

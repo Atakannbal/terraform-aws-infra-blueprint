@@ -12,11 +12,10 @@ module "codebuild" {
   github_repo                   = var.codebuild_github_repo
   github_pat                    = jsondecode(data.aws_secretsmanager_secret_version.codebuild_version[0].secret_string)["github_pat"]
   
-  cluster_name                  = module.eks[0].cluster_name
-  eks_role_arn                  = module.eks[0].eks_cluster_iam_role_arn
-  eks_cluster_security_group_id = module.eks[0].cluster_security_group_id
+  cluster_name                  = local.cluster_name
+  
   subnet_ids                    = module.vpc[0].private_subnets
 
-  depends_on                    = [module.vpc, module.eks]
+  depends_on                    = [module.vpc]
   
 }

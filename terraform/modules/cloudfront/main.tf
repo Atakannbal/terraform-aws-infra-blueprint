@@ -1,3 +1,9 @@
+############################################################################################################
+# This module provisions all resources required for a secure CloudFront CDN in front of your application.
+# Includes ACM certificate, DNS validation, CloudFront distribution, and Route 53 alias record.
+# Enables global, secure, and performant content delivery for your application.
+############################################################################################################
+
 terraform {
   required_providers {
     aws = {
@@ -6,43 +12,6 @@ terraform {
   }
 }
 
-# Create the ACM certificate
-resource "aws_acm_certificate" "cloudfront_cert" {
-  domain_name       = var.cloudfront_domain_name
-  validation_method = "DNS"
-  
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-
-# Create Route 53 DNS records for certificate validation
-resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.cloudfront_cert.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  zone_id = var.route53_zone_id 
-  name    = each.value.name
-  type    = each.value.type
-  records = [each.value.record]
-  ttl     = 60
-
-  depends_on = [aws_acm_certificate.cloudfront_cert]
-}
-
-# Validate the ACM certificate
-resource "aws_acm_certificate_validation" "cloudfront_cert_validation" {
-  certificate_arn         = aws_acm_certificate.cloudfront_cert.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
-}
-
-# CloudFront Distribution
 resource "aws_cloudfront_distribution" "cdn" {
   
   origin {
@@ -95,10 +64,42 @@ resource "aws_cloudfront_distribution" "cdn" {
   ssl_support_method  = "sni-only"
   minimum_protocol_version = "TLSv1.2_2018"
   }
-
 }
 
-# Route 53 Record to point domain to CloudFront
+resource "aws_acm_certificate" "cloudfront_cert" {
+  domain_name       = var.cloudfront_domain_name
+  validation_method = "DNS"
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route53_record" "cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cloudfront_cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  zone_id = var.route53_zone_id 
+  name    = each.value.name
+  type    = each.value.type
+  records = [each.value.record]
+  ttl     = 60
+
+  depends_on = [aws_acm_certificate.cloudfront_cert]
+}
+
+resource "aws_acm_certificate_validation" "cloudfront_cert_validation" {
+  certificate_arn         = aws_acm_certificate.cloudfront_cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
+}
+
+
+
 resource "aws_route53_record" "cloudfront" {
   zone_id = var.route53_zone_id
   name    = var.cloudfront_domain_name

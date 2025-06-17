@@ -1,4 +1,9 @@
-# VPC module to create a VPC for the EKS cluster and RDS
+###############################################
+# This block provisions a production-ready VPC   
+# with public/private subnets, NAT, and all the  
+# tags needed for EKS and AWS load balancers.    
+###############################################
+
 module "vpc" {
   source             = "terraform-aws-modules/vpc/aws"
   version            = "~> 5.0"
@@ -8,30 +13,28 @@ module "vpc" {
   public_subnets     = var.public_subnets
   private_subnets    = var.private_subnets
 
-  # Enable a NAT Gateway for private subnets to access the internet
   enable_nat_gateway = true
-  # Use a single NAT Gateway to reduce costs
   single_nat_gateway = true
-  # Automatically assign public IPs to instances in public subnets
   map_public_ip_on_launch = true
   
-  # Tags for Kubernetes to identify the VPC
+  
   tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 
-  # Tags for public subnets to allow ALB creation
   public_subnet_tags = {
     "kubernetes.io/role/elb" = "1"
   }
 
-  # Tags for private subnets to allow internal load balancers
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb" = "1"
   }
-
- 
 }
+
+###################################################################################
+# Following resources allow all resources in VPC (including private subnets)      
+# to securely access ECR, EKS, STS via VPC endpoints, without using the internet.      #
+###################################################################################
 
 resource "aws_security_group" "vpc_endpoints" {
   name        = "${var.project_name}-${var.environment}-vpc-endpoints-sg"
@@ -56,3 +59,39 @@ resource "aws_security_group_rule" "allow_vpc_to_vpc_endpoints" {
   description       = "Allow all VPC traffic to VPC endpoints on 443 (for testing)"
 }
 
+resource "aws_vpc_endpoint" "ecr_dkr" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.${var.region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = module.vpc.private_subnets
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "ecr_api" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.${var.region}.ecr.api"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = module.vpc.private_subnets
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+}
+
+
+resource "aws_vpc_endpoint" "eks" {
+  vpc_id            = module.vpc.vpc_id
+  service_name      = "com.amazonaws.${var.region}.eks"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = module.vpc.private_subnets
+  security_group_ids = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "sts" {
+  vpc_id              = module.vpc.vpc_id
+  service_name        = "com.amazonaws.${var.region}.sts"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = module.vpc.private_subnets
+  security_group_ids  = [aws_security_group.vpc_endpoints.id]
+  private_dns_enabled = true
+}

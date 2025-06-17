@@ -1,3 +1,9 @@
+#####################################################################################
+# This module provisions all resources required for CloudWatch observability in EKS.
+# Includes IAM roles, policies, log groups, EKS Pod Identity, and CloudWatch add-ons.
+# Enables secure, automated logging and monitoring for your Kubernetes workloads.
+#####################################################################################
+
 resource "aws_eks_addon" "pod_identity" {
   cluster_name  = var.cluster_name
   addon_name    = "eks-pod-identity-agent"
@@ -80,7 +86,7 @@ resource "aws_cloudwatch_log_group" "backend" {
 resource "aws_eks_addon" "cloudwatch_container_insights" {
   cluster_name = var.cluster_name
   addon_name   = "amazon-cloudwatch-observability"
-  addon_version = var.cloudwatchContainerInsights_version  # Minimum version supporting EKS Pod Identity (3.1.0 or later)
+  addon_version = var.cloudwatchContainerInsights_version
 
   configuration_values = jsonencode({
       agent = {

@@ -1,69 +1,9 @@
-# IAM policy for Cluster Autoscaler
-resource "aws_iam_policy" "cluster_autoscaler" {
-  name        = "${var.cluster_name}-ClusterAutoscalerPolicy"
-  description = "Policy for EKS Cluster Autoscaler"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "autoscaling:DescribeAutoScalingGroups",
-          "autoscaling:DescribeAutoScalingInstances",
-          "autoscaling:DescribeLaunchConfigurations",
-          "autoscaling:DescribeTags",
-          "autoscaling:SetDesiredCapacity",
-          "autoscaling:TerminateInstanceInAutoScalingGroup",
-          "ec2:DescribeLaunchTemplateVersions",
-          "ec2:DescribeInstanceTypes"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
+#############################################################################################
+# This module provisions all resources required for Kubernetes Cluster Autoscaler on EKS.
+# Includes IAM policy, IAM role with IRSA, service account, and Helm deployment.
+# Ensures secure, automated node scaling for your EKS cluster.
+#############################################################################################
 
-# IAM role for Cluster Autoscaler with IRSA
-resource "aws_iam_role" "cluster_autoscaler" {
-  name = "${var.cluster_name}-ClusterAutoscalerRole"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = "arn:aws:iam::${var.account_id}:oidc-provider/${var.oidc_provider}"
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringEquals = {
-            "${var.oidc_provider}:sub" = "system:serviceaccount:kube-system:cluster-autoscaler"
-            "${var.oidc_provider}:aud" = "sts.amazonaws.com"
-          }
-        }
-      }
-    ]
-  })
-}
-
-# Attach policy to role
-resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
-  role       = aws_iam_role.cluster_autoscaler.name
-  policy_arn = aws_iam_policy.cluster_autoscaler.arn
-}
-
-# Service account for the AWS Load Balancer Controller
-resource "kubernetes_service_account" "aws_load_balancer_controller" {
-  metadata {
-    name      = "cluster-autoscaler"
-    namespace = "kube-system"
-    annotations = {
-      "eks.amazonaws.com/role-arn" = aws_iam_role.cluster_autoscaler.arn
-    }
-  }
-}
-
-# Deploy Cluster Autoscaler via Helm
 resource "helm_release" "cluster_autoscaler" {
   name       = "cluster-autoscaler"
   repository = "https://kubernetes.github.io/autoscaler"
@@ -122,5 +62,66 @@ resource "helm_release" "cluster_autoscaler" {
   set {
     name  = "extraArgs.scale-down-delay-after-add"
     value = "2m"
+  }
+}
+
+resource "aws_iam_policy" "cluster_autoscaler" {
+  name        = "${var.cluster_name}-ClusterAutoscalerPolicy"
+  description = "Policy for EKS Cluster Autoscaler"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:DescribeAutoScalingGroups",
+          "autoscaling:DescribeAutoScalingInstances",
+          "autoscaling:DescribeLaunchConfigurations",
+          "autoscaling:DescribeTags",
+          "autoscaling:SetDesiredCapacity",
+          "autoscaling:TerminateInstanceInAutoScalingGroup",
+          "ec2:DescribeLaunchTemplateVersions",
+          "ec2:DescribeInstanceTypes"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "cluster_autoscaler" {
+  name = "${var.cluster_name}-ClusterAutoscalerRole"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Federated = "arn:aws:iam::${var.account_id}:oidc-provider/${var.oidc_provider}"
+        }
+        Action = "sts:AssumeRoleWithWebIdentity"
+        Condition = {
+          StringEquals = {
+            "${var.oidc_provider}:sub" = "system:serviceaccount:kube-system:cluster-autoscaler"
+            "${var.oidc_provider}:aud" = "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "cluster_autoscaler" {
+  role       = aws_iam_role.cluster_autoscaler.name
+  policy_arn = aws_iam_policy.cluster_autoscaler.arn
+}
+
+resource "kubernetes_service_account" "aws_load_balancer_controller" {
+  metadata {
+    name      = "cluster-autoscaler"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = aws_iam_role.cluster_autoscaler.arn
+    }
   }
 }

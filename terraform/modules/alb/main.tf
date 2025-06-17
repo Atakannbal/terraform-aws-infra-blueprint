@@ -1,32 +1,9 @@
-# IAM policy for the AWS Load Balancer Controller
-resource "aws_iam_policy" "aws_lb_controller_policy" {
-  name   = "AWSLoadBalancerControllerIAMPolicy"
-  policy = file("${path.module}/aws-lb-controller-policy.json")
-}
+############################################################################################
+# This module provisions all resources required for the AWS Load Balancer Controller on EKS.
+# Includes IAM policy, IRSA role, Kubernetes service account, and Helm deployment.
+# Enables dynamic ALB/NLB management for Kubernetes ingress resources.
+############################################################################################
 
-# IAM role for the AWS Load Balancer Controller using IRSA
-module "aws_lb_controller_role" {
-  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version     = "~> 5.0"
-  create_role = true
-  role_name   = "${var.project_name}-${var.environment}-aws-lb-controller-role"
-  provider_url = var.oidc_provider
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
-  role_policy_arns = [aws_iam_policy.aws_lb_controller_policy.arn]
-}
-
-# Service account for the AWS Load Balancer Controller
-resource "kubernetes_service_account" "aws_load_balancer_controller" {
-  metadata {
-    name      = "aws-load-balancer-controller"
-    namespace = "kube-system"
-    annotations = {
-      "eks.amazonaws.com/role-arn" = module.aws_lb_controller_role.iam_role_arn
-    }
-  }
-}
-
-# Helm release for the AWS Load Balancer Controller
 resource "helm_release" "aws_load_balancer_controller" {
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
@@ -83,4 +60,29 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   wait    = true
   timeout = 600
+}
+
+resource "aws_iam_policy" "aws_lb_controller_policy" {
+  name   = "AWSLoadBalancerControllerIAMPolicy"
+  policy = file("${path.module}/aws-lb-controller-policy.json")
+}
+
+module "aws_lb_controller_role" {
+  source      = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version     = "~> 5.0"
+  create_role = true
+  role_name   = "${var.project_name}-${var.environment}-aws-lb-controller-role"
+  provider_url = var.oidc_provider
+  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:aws-load-balancer-controller"]
+  role_policy_arns = [aws_iam_policy.aws_lb_controller_policy.arn]
+}
+
+resource "kubernetes_service_account" "aws_load_balancer_controller" {
+  metadata {
+    name      = "aws-load-balancer-controller"
+    namespace = "kube-system"
+    annotations = {
+      "eks.amazonaws.com/role-arn" = module.aws_lb_controller_role.iam_role_arn
+    }
+  }
 }

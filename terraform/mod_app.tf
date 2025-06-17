@@ -17,5 +17,5 @@ module "app" {
   backend_image_url         = "${module.ecr[0].backend_repository_url}:${var.backend_tag}"
   rds_secret_arn            = module.rds[0].db_instance_master_user_secret_arn  
 
-  depends_on                = [module.vpc, module.eks, module.alb.aws_load_balancer_controller, module.ext-dns.external_dns, module.route53, module.external_secrets, module.rds, module.cluster_autoscaler]
+  depends_on                = [module.vpc, module.eks, module.alb, module.ext-dns.external_dns, module.route53, module.external_secrets, module.rds]
 }

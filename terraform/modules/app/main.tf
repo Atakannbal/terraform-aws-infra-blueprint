@@ -1,7 +1,61 @@
+################################################################################################
+# This module provisions all resources required for deploying the application stack on EKS.
+# Includes ACM certificate, Route 53 validation, CloudFront security group, and Helm deployment.
+# Enables secure, automated deployment of frontend and backend with HTTPS and DNS integration.
+################################################################################################
 
-# Data source to retrieve the ACM certificate for the frontend domain
+resource "helm_release" "app" {
+  name       = "app"
+  chart      = "${path.module}/helm"
+  namespace  = "default"
+  upgrade_install = true
+  
+  set {
+    name  = "frontend.image"
+    value = var.frontend_image_url
+  }
 
-# Create ACM certificate for ALB
+  set {
+    name  = "backend.image"
+    value = var.backend_image_url
+  }
+
+  set {
+    name  = "backend.dbUrl"
+    value = var.db_url
+  }
+
+  set {
+    name  = "frontend.alb_hostname"
+    value = var.alb_domain
+  }
+
+  set {
+    name  = "frontend.cloudfront_hostname"
+    value = var.cloudfront_domain
+  }
+
+  set {
+    name  = "frontend.certArn"
+    value = aws_acm_certificate.frontend.arn
+  }
+
+  set {
+    name  = "region"
+    value = var.region
+  }
+
+  set {
+    name  = "projectName"
+    value = var.project_name
+  }
+
+  set {
+    name = "rds_secret_arn"
+    value = var.rds_secret_arn
+  }
+}
+
 resource "aws_acm_certificate" "frontend" {
   domain_name       = var.alb_domain
   validation_method = "DNS"
@@ -18,7 +72,7 @@ resource "aws_route53_record" "frontend_cert_validation" {
       type   = dvo.resource_record_type
     }
   }
-  zone_id = var.route53_zone_id  # From ext-dns module
+  zone_id = var.route53_zone_id
   name    = each.value.name
   type    = each.value.type
   records = [each.value.record]
@@ -59,60 +113,3 @@ resource "aws_security_group" "allow_cloudfront" {
   }
 }
 
-# Helm release for the application (frontend and backend)
-resource "helm_release" "app" {
-  name       = "app"
-  chart      = "${path.module}/helm"
-  namespace  = "default"
-  upgrade_install = true
-  
-  # Frontend image URL
-  set {
-    name  = "frontend.image"
-    value = var.frontend_image_url
-  }
-
-  # Backend image URL
-  set {
-    name  = "backend.image"
-    value = var.backend_image_url
-  }
-
-  set {
-    name  = "backend.dbUrl"
-    value = var.db_url
-  }
-
-  # Hostname for the frontend Ingress
-  set {
-    name  = "frontend.alb_hostname"
-    value = var.alb_domain
-  }
-
-  set {
-    name  = "frontend.cloudfront_hostname"
-    value = var.cloudfront_domain
-  }
-
-  # ACM certificate ARN for HTTPS
-  set {
-    name  = "frontend.certArn"
-    value = aws_acm_certificate.frontend.arn
-  }
-
-  set {
-    name  = "region"
-    value = var.region
-  }
-
-  set {
-    name  = "projectName"
-    value = var.project_name
-  }
-
-  # RDS secret ARN
-  set {
-    name = "rds_secret_arn"
-    value = var.rds_secret_arn
-  }
-}

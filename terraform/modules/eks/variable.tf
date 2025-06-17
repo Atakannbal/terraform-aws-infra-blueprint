@@ -60,3 +60,17 @@ variable "cidr_external_access" {
   type        = list(string)
 }
 
+variable "codebuild_role_arn" {
+  description = "ARN of the CodeBuild role."
+  type        = string
+}
+
+variable "codebuild_sg_id" {
+  description = "SG Id of codebuild."
+  type        = string
+}
+
+variable "vpc_endpoints_sg_id" {
+  description = "Security group ID for VPC endpoints."
+  type        = string
+}
