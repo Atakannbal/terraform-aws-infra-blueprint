@@ -7,6 +7,7 @@ module "vpc" {
   cluster_name       = local.cluster_name
   
   region             = var.region
+  vpc_cidr_range     = var.vpc_cidr_range
   private_subnets    = var.private_subnets
   public_subnets     = var.public_subnets
   availability_zones = var.availability_zones
