@@ -47,7 +47,6 @@ phases:
       - aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
       - helm version
       - kubectl version --client
-      - kubectl get nodes
       - helm upgrade --install app ./terraform/modules/app/helm --set frontend.image=$FRONTEND_REPOSITORY_URI:latest --set backend.image=$BACKEND_REPOSITORY_URI:latest
       - echo "END BUILD PHASE"
 artifacts:
