@@ -10,7 +10,7 @@ jobs:
       - name: Trigger AWS CodeBuild
         uses: aws-actions/aws-codebuild-run-build@v1
         with:
-          project-name: ce-task-prod-codebuild
+          project-name: ce-prj-prd-codebuild
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

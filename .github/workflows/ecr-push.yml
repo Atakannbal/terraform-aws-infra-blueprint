@@ -39,8 +39,8 @@ jobs:
           context: ./backend
           push: true
           tags: |
-            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:${{ github.ref_name }}
-            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-backend-ecr:latest
+            ${{ steps.login-ecr.outputs.registry }}/ce-prj-prd-backend-ecr:${{ github.ref_name }}
+            ${{ steps.login-ecr.outputs.registry }}/ce-prj-prd-backend-ecr:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
 
@@ -50,7 +50,7 @@ jobs:
           context: ./frontend
           push: true
           tags: | 
-            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:${{ github.ref_name }}
-            ${{ steps.login-ecr.outputs.registry }}/ce-task-prod-frontend-ecr:latest
+            ${{ steps.login-ecr.outputs.registry }}/ce-prj-prd-frontend-ecr:${{ github.ref_name }}
+            ${{ steps.login-ecr.outputs.registry }}/ce-prj-prd-frontend-ecr:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache

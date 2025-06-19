@@ -2,9 +2,10 @@ version: 0.2
 
 env:
   variables:
-    BACKEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-task-prod-backend-ecr
-    FRONTEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-task-prod-frontend-ecr
+    BACKEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-prj-prd-backend-ecr
+    FRONTEND_REPOSITORY_URI: 980921750296.dkr.ecr.eu-central-1.amazonaws.com/ce-prj-prd-frontend-ecr
     AWS_REGION: eu-central-1
+    EKS_CLUSTER_NAME: ce-prj-prd-eks-cluster-120
 
 phases:
   install:
@@ -26,6 +27,11 @@ phases:
       - aws --version
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $BACKEND_REPOSITORY_URI
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $FRONTEND_REPOSITORY_URI
+      - echo "Checking EKS API endpoint connectivity..."
+      - EKS_ENDPOINT=$(aws eks describe-cluster --region $AWS_REGION --name $EKS_CLUSTER_NAME --query "cluster.endpoint" --output text)
+      - curl -vk $EKS_ENDPOINT
+
+
   build:
     commands:
       - set -x
@@ -38,7 +44,7 @@ phases:
       - docker build -t $FRONTEND_REPOSITORY_URI:latest ./frontend
       - docker push $FRONTEND_REPOSITORY_URI:latest
       - echo Updating kubeconfig and deploying to EKS...
-      - aws eks update-kubeconfig --region $AWS_REGION --name ce-task-prod-eks-cluster
+      - aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
       - helm version
       - kubectl version --client
       - helm upgrade --install app ./terraform/modules/app/helm --set frontend.image=$FRONTEND_REPOSITORY_URI:latest --set backend.image=$BACKEND_REPOSITORY_URI:latest
