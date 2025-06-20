@@ -19,7 +19,7 @@ enable_codebuild_module = true              # CodeBuild
 enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
 enable_eks_module = true                     # Elastic Kubernetes Service
 
-enable_bastion_module = true                # Bastion Instance
+enable_bastion_module = false                # Bastion Instance
               
 enable_rds_module = true                    # Relational Database Service
 enable_cluster_autoscaler_module = true     # Cluster Autoscaler
