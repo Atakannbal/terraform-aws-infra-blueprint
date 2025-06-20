@@ -29,3 +29,8 @@ variable "cidr_bastion_access" {
   description = "List of CIDR blocks allowed to access the bastion host."
   type        = list(string)
 }
+
+variable "eks_node_security_group_id" {
+  description = "EKS node security group id"
+  type = string
+}

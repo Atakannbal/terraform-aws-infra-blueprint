@@ -1,3 +1,8 @@
+###################################################################################################
+# This module provisions Horizontal Pod Autoscalers (HPA) for backend and frontend deployments.
+# Enables dynamic scaling of pods based on CPU and memory utilization in EKS.
+###################################################################################################
+
 resource "kubernetes_horizontal_pod_autoscaler_v2" "backend_hpa" {
   metadata {
     name      = "${var.project_name}-${var.environment}-backend-hpa"
@@ -7,7 +12,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "backend_hpa" {
     scale_target_ref {
       api_version = "apps/v1"
       kind        = "Deployment"
-      name        = "backend"  # Dynamically construct the name
+      name        = "backend" 
     }
     min_replicas = 1
     max_replicas = 2
@@ -34,7 +39,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "backend_hpa" {
     behavior {
       scale_up {
         stabilization_window_seconds = 10
-        select_policy = "Max" # Use the policy with the largest scaling change
+        select_policy = "Max"
 
         policy {
           type = "Percent"
@@ -44,7 +49,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "backend_hpa" {
       }
       scale_down {
         stabilization_window_seconds = 60
-        select_policy = "Max" # Use the policy with the largest scaling change
+        select_policy = "Max"
 
         policy {
           type = "Percent"
@@ -65,7 +70,7 @@ resource "kubernetes_horizontal_pod_autoscaler_v2" "frontend_hpa" {
     scale_target_ref {
       api_version = "apps/v1"
       kind        = "Deployment"
-      name        = "frontend"  # Dynamically construct the name
+      name        = "frontend" 
     }
     min_replicas = 1
     max_replicas = 2

@@ -1,3 +1,9 @@
+#######################################################################################################################
+# This module provisions all resources required for External Secrets Operator integration with AWS Secrets Manager.wq
+# Includes IAM policy, IRSA role, Kubernetes service account, and Helm deployment.
+# Enables secure, automated syncing of secrets from AWS Secrets Manager to Kubernetes.
+#######################################################################################################################
+
 terraform {
   required_providers {
     kubectl = {
@@ -7,15 +13,13 @@ terraform {
   }
 }
 
-# Deploy External Secrets Operator via Helm
 resource "helm_release" "external_secrets" {
   name       = "external-secrets-operator"
   repository = "https://charts.external-secrets.io"
   chart      = "external-secrets"
   namespace  = "kube-system"
   version    = var.external_secrets_helm_version
-  
-
+  upgrade_install = true
 
   set {
     name  = "installCRDs"
@@ -41,7 +45,6 @@ resource "helm_release" "external_secrets" {
   depends_on = [ kubernetes_service_account.external_secrets ]
 }
 
-# IAM policy for External Secrets Operator to access Secrets Manager
 resource "aws_iam_policy" "external_secrets" {
   name        = "${var.project_name}-ExternalSecretsPolicy"
   description = "Policy for External Secrets Operator to access RDS secret"
@@ -60,7 +63,6 @@ resource "aws_iam_policy" "external_secrets" {
   })
 }
 
-# IAM role for External Secrets Operator (IRSA)
 resource "aws_iam_role" "external_secrets" {
   name = "${var.project_name}-ExternalSecretsRole"
   assume_role_policy = jsonencode({
@@ -88,7 +90,6 @@ resource "aws_iam_role_policy_attachment" "external_secrets" {
   policy_arn = aws_iam_policy.external_secrets.arn
 }
 
-# Service account for External Secrets Operator
 resource "kubernetes_service_account" "external_secrets" {
   metadata {
     name      = "external-secrets-operator"
@@ -97,11 +98,6 @@ resource "kubernetes_service_account" "external_secrets" {
       "eks.amazonaws.com/role-arn" = aws_iam_role.external_secrets.arn
     }
   }
-}
-
-resource "time_sleep" "wait_for_crd" {
-  depends_on = [helm_release.external_secrets]
-  create_duration = "150s" # Adjust duration as needed (e.g., 60s)
 }
 
 # Wait for SecretStore CRD to be established before applying manifests

@@ -69,6 +69,9 @@ Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS 
 
 ## 🔍 Useful Snippets
 
+### Get VPCs IDs
+`aws ec2 describe-vpcs --query "Vpcs[].VpcId" --output text`
+
 ### Apply using tfvars
 `terraform apply -var-file="apply-tfvars/prod.tfvars"`
 
@@ -105,3 +108,10 @@ Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS 
 
 ### Check the max pod capacity of EKS nodes
 `kubectl get nodes -o json | jq '.items[] | {name: .metadata.name, maxPods: .status.allocatable.pods}'`
+
+### Get EKS API Server Endpoint
+`aws eks describe-cluster --name ce-task-prod-eks-cluster --region eu-central-1 --query "cluster.endpoint" --output text`
+
+# Gotchas 💡
+- when both NAT and VPC endpoints exist, Private DNS will force traffic to the endpoint, not the NAT. If the endpoint is misconfigured, you get timeouts.
+

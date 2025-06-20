@@ -143,7 +143,6 @@ variable "eks_cluster_version" {
   type        = string
 }
 
-
 variable "eks_instance_type" {
   description = "Instance types for EKS nodes"
   type        = list(string)
@@ -263,8 +262,8 @@ variable "frontend_tag" {
   description = "Tag for the frontend image"
   type        = string
 }
+
 variable "backend_tag" {
   description = "Tag for the backend image"
   type        = string
 }
-

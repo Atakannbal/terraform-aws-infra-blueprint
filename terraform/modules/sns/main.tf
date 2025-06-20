@@ -1,3 +1,7 @@
+##################################################################################################
+# This module provisions CloudWatch alarms and SNS notifications for monitoring.
+# Includes alarms for frontend and backend pods, SNS topic, and email subscription for alerts.
+#################################################################################################
 
 resource "aws_cloudwatch_metric_alarm" "frontend_high_cpu" {
   alarm_name          = "${var.project_name}-${var.environment}-frontend-high-cpu"
@@ -18,12 +22,10 @@ resource "aws_cloudwatch_metric_alarm" "frontend_high_cpu" {
   }
 }
 
-# SNS Topic for notifications
 resource "aws_sns_topic" "alerts" {
   name = "${var.project_name}-${var.environment}-alerts"
 }
 
-# SNS Topic Subscription (replace with your email)
 resource "aws_sns_topic_subscription" "email" {
   topic_arn = aws_sns_topic.alerts.arn
   protocol  = "email"

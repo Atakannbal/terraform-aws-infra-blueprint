@@ -1,3 +1,8 @@
+############################################################################
+# This module provisions the Kubernetes Metrics Server via Helm for EKS.
+# Enables resource usage metrics collection for autoscaling and monitoring.
+#############################################################################
+
 resource "helm_release" "metrics_server" {
   name       = "${var.project_name}-${var.environment}-metrics-server"
   repository = "https://kubernetes-sigs.github.io/metrics-server/"

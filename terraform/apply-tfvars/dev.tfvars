@@ -1,44 +1,38 @@
 #########################
 ### General variables ###
 #########################
-project_name = "ce-task"
-environment = "dev"
+project_name = "ce-prj"
+environment = "prd"
 region = "eu-central-1"
-availability_zones = ["eu-central-1a"]
+availability_zones = ["eu-central-1a", "eu-central-1b"]
 
 hosted_zone_domain_name = "ce-project-aws.atakanbal.com"
-load_balancer_domain_name = "internal-dev.ce-project-aws.atakanbal.com"
-cloudfront_domain_name = "dev.ce-project-aws.atakanbal.com"
+load_balancer_domain_name = "internal.ce-project-aws.atakanbal.com"
+cloudfront_domain_name = "prod.ce-project-aws.atakanbal.com"
 
 ##############################
 ### Enable/Disable modules ###
 ##############################
+enable_ecr_module = true                     # Elastic Container Registry
+enable_route53_module = true                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
+enable_codebuild_module = true              # CodeBuild
+enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
+enable_eks_module = true                     # Elastic Kubernetes Service
 
-# Core infrastructure
-enable_vpc_module = false
-enable_ecr_module = true
+enable_bastion_module = true                # Bastion Instance
+              
+enable_rds_module = true                    # Relational Database Service
+enable_cluster_autoscaler_module = true     # Cluster Autoscaler
+enable_alb_module = true                    # Application Load Balancer
+enable_external_dns_module = true           # External DNS
+enable_cloudwatch_module = true             # Cloudwatch
+enable_metrics_server_module = true         # Metrics server
+enable_sns_module = true                    # Simple Notification Service
 
-# EKS and core cluster (require VPC)
-enable_eks_module = false
-
-# Cluster add-ons (require EKS)
-enable_cluster_autoscaler_module = false
-enable_external_dns_module = false
-enable_alb_module = false
-enable_external_secrets_module = false
-enable_hpa_module = false
-enable_cloudwatch_module = false
-enable_metrics_server_module = false
-
-# Data and build (require VPC, EKS for some)
-enable_rds_module = false
-enable_codebuild_module = false
-enable_sns_module = false
-
-# Application layer (require EKS, ECR, RDS, etc.)
-enable_app_module = false
-enable_bastion_module = false
-enable_cloudfront_module = false
+enable_external_secrets_module = true       # External Secret Operator
+enable_app_module = true                    # Application
+enable_hpa_module = true                    # Horizontal Pod Autoscaler
+enable_cloudfront_module = true             # Cloudfront
 
 ###########
 ### APP ###
@@ -66,7 +60,7 @@ eks_cluster_version = "1.31"
 eks_instance_type = ["t3.micro"]
 eks_nodes_count = 1
 eks_min_nodes_count = 1
-eks_max_nodes_count = 10
+eks_max_nodes_count = 7
 
 ###################
 ### Helm charts ###
@@ -105,5 +99,3 @@ sns_subscriber_email_address = "atakannbal@gmail.com"
 codebuild_compute_type = "BUILD_GENERAL1_SMALL"
 codebuild_image = "aws/codebuild/standard:7.0"
 codebuild_github_repo = "https://github.com/Atakannbal/terraform-aws-infra-blueprint.git"
-
-
