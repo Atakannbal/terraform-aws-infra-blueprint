@@ -1,4 +1,4 @@
-name: Terraform Apply
+name: Deploy Infrastructure via Terraform
 
 on:
   workflow_dispatch:
@@ -28,6 +28,6 @@ jobs:
         run: terraform -chdir=terraform plan -var-file=apply-tfvars/prod.tfvars
         
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' # restrict to main branch
+        if: github.ref == 'refs/heads/main'
         run: terraform -chdir=terraform apply -auto-approve -var-file=apply-tfvars/prod.tfvars
     

@@ -1,4 +1,4 @@
-name: Trigger CodeBuild
+name: Deploy Application via AWS CodeBuild
 
 on:
   workflow_dispatch:
