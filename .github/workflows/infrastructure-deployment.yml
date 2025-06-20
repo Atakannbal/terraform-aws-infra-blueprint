@@ -27,7 +27,7 @@ jobs:
       - name: Terraform Plan
         run: terraform -chdir=terraform plan -var-file=apply-tfvars/prod.tfvars
         
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
-        run: terraform -chdir=terraform apply -auto-approve -var-file=apply-tfvars/prod.tfvars
+   #   - name: Terraform Apply
+   #     if: github.ref == 'refs/heads/main'
+   #     run: terraform -chdir=terraform apply -auto-approve -var-file=apply-tfvars/prod.tfvars
     
