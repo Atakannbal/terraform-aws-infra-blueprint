@@ -5,3 +5,4 @@ awscli-bundle
 bastion-key*
 .DS_Store
 local
+my-eks-key.pem

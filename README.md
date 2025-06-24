@@ -18,7 +18,7 @@ This project provisions a full-stack application infrastructure on AWS using Ter
 - 🗄️ Database: PostgreSQL
 
 ## 🛠️ Services used
-Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS Route 53 🛰️, Bastion Host (EC2) 🛡️, Amazon EC2 🖥️, Amazon ECR 🐳, Amazon EKS ☸️, AWS CodeBuild 🛠️, AWS CloudWatch 📊, AWS KMS 🗝️, Amazon RDS 🗄️, AWS Secrets Manager 🔐, AWS SNS 📣, Kubernetes Add-ons (Cluster Autoscaler, Metrics Server, HPA, External Secrets) ⚙️
+Amazon VPC 🕸️, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS Route 53 🛰️, Amazon EC2 🖥️, Amazon ECR 🐳, Amazon EKS ☸️, AWS CodeBuild 🛠️, AWS CloudWatch 📊, AWS KMS 🗝️, Amazon RDS 🗄️, AWS Secrets Manager 🔐, AWS SNS 📣, AWS IAM 🔑, Amazon S3 🪣, VPC Endpoints 🔌, Kubernetes Add-ons (Cluster Autoscaler, Metrics Server, HPA, External Secrets) ⚙️
 
 ## 🏗️ Architecture
 
