@@ -22,6 +22,8 @@ Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS 
 
 ## 🏗️ Architecture
 
+![alt text](<resources.png>)
+
 1. **Networking & DNS**
     - Amazon VPC with public and private subnets for network isolation
     - NAT Gateway for outbound internet access from private subnets
@@ -111,6 +113,10 @@ Amazon VPC 🌐, Elastic Load Balancing (ELB) 🏞️, AWS CloudFront 🌐, AWS 
 
 ### Get EKS API Server Endpoint
 `aws eks describe-cluster --name ce-task-prod-eks-cluster --region eu-central-1 --query "cluster.endpoint" --output text`
+
+### Diagram
+https://app.cloudcraft.co/view/5a1cbe1d-3629-4228-b079-4b6c5b1f06b0?key=3f800d76-d367-46ce-a638-0ccea5166ed8
+
 
 # Gotchas 💡
 - when both NAT and VPC endpoints exist, Private DNS will force traffic to the endpoint, not the NAT. If the endpoint is misconfigured, you get timeouts.
