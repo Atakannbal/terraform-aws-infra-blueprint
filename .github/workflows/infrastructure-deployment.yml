@@ -2,6 +2,9 @@ name: Deploy Infrastructure via Terraform
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   terraform:
@@ -25,9 +28,19 @@ jobs:
         run: terraform -chdir=terraform init
 
       - name: Terraform Plan
+        id: plan
         run: terraform -chdir=terraform plan -var-file=apply-tfvars/prod.tfvars
-        
+
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: terraform -chdir=terraform apply -auto-approve -var-file=apply-tfvars/prod.tfvars
-    
+
+      - name: Comment PR with Plan
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            ### Terraform Plan (prod.tfvars)
+            ```
+            ${{ steps.plan.outputs.stdout }}
+            ```
