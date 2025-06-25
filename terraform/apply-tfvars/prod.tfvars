@@ -33,7 +33,7 @@ enable_external_secrets_module = false       # External Secret Operator
 enable_app_module = false                   # Application
 enable_hpa_module = false                    # Horizontal Pod Autoscaler
 enable_cloudfront_module = false             # Cloudfront
-#test
+#test#
 
 ###########
 ### APP ###
