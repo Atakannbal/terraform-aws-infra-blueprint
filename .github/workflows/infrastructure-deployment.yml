@@ -5,6 +5,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 permissions:
   pull-requests: write
@@ -36,7 +39,7 @@ jobs:
         run: terraform -chdir=terraform plan -var-file=apply-tfvars/prod.tfvars -no-color
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform -chdir=terraform apply -auto-approve -var-file=apply-tfvars/prod.tfvars
 
       - name: Comment PR with Plan
