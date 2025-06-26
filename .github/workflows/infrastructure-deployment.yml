@@ -27,7 +27,8 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=terraform init
 
-      - name: Terraform Plan
+
+      - name: Terraform Plan Test
         id: plan
         run: terraform -chdir=terraform plan -var-file=apply-tfvars/prod.tfvars
 
