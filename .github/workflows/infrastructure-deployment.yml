@@ -48,9 +48,3 @@ jobs:
             ```
             ${{ steps.plan.outputs.stdout }}
             ```
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-          AWS_DEFAULT_REGION: eu-central-1
-          AWS_REGION: eu-central-1
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
