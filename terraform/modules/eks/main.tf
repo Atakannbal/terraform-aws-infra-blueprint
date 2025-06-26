@@ -132,4 +132,8 @@ resource "helm_release" "codebuild_rbac" {
   chart      = "${path.module}/helm"
   namespace  = "kube-system"
   depends_on = [ module.eks ]
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }

@@ -35,6 +35,7 @@ jobs:
 
 
       - name: Terraform Plan Test
+        if: github.ref != 'refs/heads/main'
         id: plan
         run: terraform -chdir=terraform plan -var-file=apply-tfvars/prod.tfvars -no-color
 

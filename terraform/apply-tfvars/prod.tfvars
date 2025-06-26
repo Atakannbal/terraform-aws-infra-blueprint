@@ -13,14 +13,16 @@ cloudfront_domain_name = "prod.ce-project-aws.atakanbal.com"
 ##############################
 ### Enable/Disable modules ###
 ##############################
-enable_ecr_module = false                     # Elastic Container Registry#
-enable_route53_module = false                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
-enable_codebuild_module = false              # CodeBuild
-enable_vpc_module = false                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
-enable_eks_module = false                    # Elastic Kubernetes Service
 
+# 1
+enable_ecr_module = true                     # Elastic Container Registry#
+enable_route53_module = true                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
+enable_codebuild_module = true              # CodeBuild
+enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
+
+# 2
+enable_eks_module = false                    # Elastic Kubernetes Service
 enable_bastion_module = false                # Bastion Instance
-              
 enable_rds_module = false                    # Relational Database Service
 enable_cluster_autoscaler_module = false     # Cluster Autoscaler
 enable_alb_module = false                    # Application Load Balancer
@@ -29,8 +31,9 @@ enable_cloudwatch_module = false             # Cloudwatch
 enable_metrics_server_module = false         # Metrics server
 enable_sns_module = false                    # Simple Notification Service
 
+# 3
 enable_external_secrets_module = false       # External Secret Operator
-enable_app_module = false                   # Application
+enable_app_module = false                    # Application
 enable_hpa_module = false                    # Horizontal Pod Autoscaler
 enable_cloudfront_module = false             # Cloudfront
 
