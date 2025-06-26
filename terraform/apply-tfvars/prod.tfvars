@@ -38,8 +38,8 @@ enable_external_secrets_module = true       # External Secret Operator
 enable_hpa_module = true                    # Horizontal Pod Autoscaler
 enable_cloudfront_module = true             # Cloudfront
 
-
-enable_app_module = false                    # Application
+# 4
+enable_app_module = true                    # Application
 
 ###########
 ### APP ###
