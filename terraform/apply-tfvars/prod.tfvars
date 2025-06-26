@@ -13,7 +13,7 @@ cloudfront_domain_name = "prod.ce-project-aws.atakanbal.com"
 ##############################
 ### Enable/Disable modules ###
 ##############################
-enable_ecr_module = true                     # Elastic Container Registry
+enable_ecr_module = true                     # Elastic Container Registry#
 enable_route53_module = true                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
 enable_codebuild_module = true              # CodeBuild
 enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
