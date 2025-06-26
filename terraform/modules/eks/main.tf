@@ -130,5 +130,5 @@ resource "helm_release" "codebuild_rbac" {
   name       = "codebuild-rbac"
   chart      = "${path.module}/helm"
   namespace  = "kube-system"
-  depends_on = [ module.eks, null_resource.eks_ready ]
+  depends_on = [ module.eks ]
 }
