@@ -34,10 +34,12 @@ enable_metrics_server_module = true         # Metrics server
 enable_sns_module = true                    # Simple Notification Service
 
 # 3
-enable_external_secrets_module = false       # External Secret Operator
+enable_external_secrets_module = true       # External Secret Operator
+enable_hpa_module = true                    # Horizontal Pod Autoscaler
+enable_cloudfront_module = true             # Cloudfront
+
+
 enable_app_module = false                    # Application
-enable_hpa_module = false                    # Horizontal Pod Autoscaler
-enable_cloudfront_module = false             # Cloudfront
 
 ###########
 ### APP ###
