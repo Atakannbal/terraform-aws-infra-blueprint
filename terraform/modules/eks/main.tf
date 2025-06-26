@@ -126,14 +126,9 @@ resource "aws_iam_role_policy_attachment" "eks_node_group_cni_policy" {
 # using least-privilege permissions and group-based access (codebuild-deployers).      #
 ########################################################################################
 
-
 resource "helm_release" "codebuild_rbac" {
   name       = "codebuild-rbac"
   chart      = "${path.module}/helm"
   namespace  = "kube-system"
   depends_on = [ module.eks ]
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
