@@ -14,7 +14,7 @@ rules:
     resources: ["jobs", "cronjobs"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: ["external-secrets.io"]
-    resources: ["externalsecrets"]
+    resources: ["externalsecrets", "clustersecretstores"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 
 ---
