@@ -24,7 +24,7 @@ enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per
 enable_eks_module = true                     # Elastic Kubernetes Service
 
 # 3
-enable_bastion_module = false                # Bastion Instance
+enable_bastion_module = true                # Bastion Instance
 enable_rds_module = true                    # Relational Database Service
 enable_cluster_autoscaler_module = true     # Cluster Autoscaler
 enable_alb_module = true                    # Application Load Balancer
