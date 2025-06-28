@@ -39,7 +39,7 @@ enable_hpa_module = true                    # Horizontal Pod Autoscaler
 enable_cloudfront_module = true             # Cloudfront
 
 # 4
-enable_app_module = true                    # Application
+enable_app_module = false                    # Application
 
 ###########
 ### APP ###
