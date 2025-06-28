@@ -24,14 +24,14 @@ enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per
 enable_eks_module = true                     # Elastic Kubernetes Service
 
 # 3
-enable_bastion_module = true                # Bastion Instance
-enable_rds_module = true                    # Relational Database Service
-enable_cluster_autoscaler_module = true     # Cluster Autoscaler
-enable_alb_module = true                    # Application Load Balancer
-enable_external_dns_module = true           # External DNS
-enable_cloudwatch_module = true             # Cloudwatch
-enable_metrics_server_module = true         # Metrics server
-enable_sns_module = true                    # Simple Notification Service
+enable_bastion_module = false                # Bastion Instance
+enable_rds_module = false                    # Relational Database Service
+enable_cluster_autoscaler_module = false     # Cluster Autoscaler
+enable_alb_module = false                    # Application Load Balancer
+enable_external_dns_module = false           # External DNS
+enable_cloudwatch_module = false             # Cloudwatch
+enable_metrics_server_module = false         # Metrics server
+enable_sns_module = false                    # Simple Notification Service
 
 # 3
 enable_external_secrets_module = false       # External Secret Operator
