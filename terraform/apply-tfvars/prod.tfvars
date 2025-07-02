@@ -15,23 +15,23 @@ cloudfront_domain_name = "prod.ce-project-aws.atakanbal.com"
 ##############################
 
 # 1
-enable_ecr_module = true                     # Elastic Container Registry#
-enable_route53_module = true                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
-enable_codebuild_module = true               # CodeBuild
-enable_vpc_module = true                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
+enable_ecr_module = false                     # Elastic Container Registry#
+enable_route53_module = false                 # Route 53 ($0.50 per Hosted Zone for the first 25 Hosted Zones)
+enable_codebuild_module = false               # CodeBuild
+enable_vpc_module = false                     # Virtual Private Cloud ($0.052 per NAT Gateway Hour)
 
 # 2
-enable_eks_module = true                     # Elastic Kubernetes Service
+enable_eks_module = false                     # Elastic Kubernetes Service
 
 # 3
-enable_bastion_module = true                # Bastion Instance
-enable_rds_module = true                    # Relational Database Service
-enable_cluster_autoscaler_module = true     # Cluster Autoscaler
-enable_alb_module = true                    # Application Load Balancer
-enable_external_dns_module = true           # External DNS
-enable_cloudwatch_module = true             # Cloudwatch
-enable_metrics_server_module = true         # Metrics server
-enable_sns_module = true                    # Simple Notification Service
+enable_bastion_module = false                # Bastion Instance
+enable_rds_module = false                    # Relational Database Service
+enable_cluster_autoscaler_module = false     # Cluster Autoscaler
+enable_alb_module = false                    # Application Load Balancer
+enable_external_dns_module = false           # External DNS
+enable_cloudwatch_module = false             # Cloudwatch
+enable_metrics_server_module = false         # Metrics server
+enable_sns_module = false                    # Simple Notification Service
 
 # 3
 enable_external_secrets_module = false       # External Secret Operator
