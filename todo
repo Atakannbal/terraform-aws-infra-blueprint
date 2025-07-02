@@ -1,14 +1,11 @@
 # Todo
 [] Upgrade cluster version using blue green deployment
-[] Reduce NAT Gateway cost by utilizing VPC Endpoints
-[] Create dev branch and dev environment
 [] Experiment RDS to Aurora migration
 [] Experiment using ECS
 [] Experiment using Fargate
 
 # In-progress
-[] Run terraform on GH Action pipeline
-[] Architecture diagram
+[] Reduce NAT Gateway cost by utilizing VPC Endpoints
 
 # Blocked
 [-] WAF 
@@ -41,4 +38,7 @@
 [x] Integrate Github Action with Codebuild Runners
 [x] Don't manage db-credentials secret via a static Helm template. use External Secrets Operator to fully manage secret by syncing it from AWS Secrets Manager.
 [x] Implement EKS Cluster Autoscaler to scale when there are not enough nodes
-[x] Extract repository to its own repo  
+[x] Extract repository to its own repo
+[x] Run terraform on GH Action pipeline
+[x] Architecture diagram
+[x] Create dev branch, run terraform plan on pull request, terraform apply when merged
