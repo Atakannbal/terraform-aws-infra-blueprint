@@ -11,12 +11,7 @@ module "vpc" {
   cidr               = var.vpc_cidr_range
   azs                = var.availability_zones
   public_subnets     = var.public_subnets
-  private_subnets    = var.private_subnets
-
-  enable_nat_gateway = true
-  single_nat_gateway = true
-  map_public_ip_on_launch = true
-  
+  private_subnets    = var.private_subnets  
   
   tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
