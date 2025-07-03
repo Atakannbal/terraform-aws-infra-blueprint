@@ -1,13 +1,28 @@
 # Todo
+[] NAT Instance setup for dev (low-cost)
+[] VPC Endpoint setup for prod
 [] Upgrade cluster version using blue green deployment
 [] Experiment RDS to Aurora migration
 [] Experiment using ECS
 [] Experiment using Fargate
 
 # In-progress
-[] Reduce NAT Gateway cost by utilizing VPC Endpoints
 
 # Blocked
+[-] Reduce NAT Gateway cost by utilizing VPC Endpoints
+
+* Using VPC Endpoints doesn't guarantee cost reduction, but more secure
+*  If you are multi-az and have many vpc endpoints with low data transfer, it can be more expensive than NAT Gateway
+* https://aws.amazon.com/privatelink/pricing/
+* https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-pricing.html
+
+| Option        | Hourly (1 endpoint, 1 AZ) | Monthly (1 endpoint, 1 AZ) | Hourly (1 endpoint, 2 AZs) | Monthly (1 endpoint, 2 AZs) | Monthly (6 endpoints, 2 AZs) |
+|-------------- |---------------------------|----------------------------|----------------------------|-----------------------------|------------------------------|
+| NAT Gateway   | $0.052                    | $37.44                     | $0.104                     | $74.88                      | $74.88                       |
+| NAT Instance  | $0.0104                   | $7.49                      | $0.0208                    | $14.98                      | $14.98                       |
+| VPC Endpoint  | $0.012                    | $8.64                      | $0.024                     | $17.28                      | $103.68                      |
+
+
 [-] WAF 
 * CloudFront out of the box provides DDoS protection, TLS/SSL Encryption, Geo-Restriction. WAF does not worth the 5$+ fix cost for my requirements.
 
